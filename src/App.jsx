@@ -29,17 +29,17 @@ const loopSteps = [
   {
     number: "01",
     title: "Tokenize",
-    body: "Feed image patches and latent registers into the Generative Encoder to produce a clean latent z0.",
+    body: "Run the shared encoder on image patches and latent registers to get the clean latent z0.",
   },
   {
     number: "02",
     title: "Detach + noise",
-    body: "Stop-gradient on z0, then corrupt it into zt for flow matching.",
+    body: "Stop-gradient on z0, then corrupt it into zt for the denoising objective.",
   },
   {
     number: "03",
     title: "Denoise with the same weights",
-    body: "Run the same Generative Encoder again, now without image patches, to predict the clean latent.",
+    body: "Run the same encoder again, now without image patches, to predict the clean latent.",
   },
 ];
 
@@ -315,34 +315,31 @@ function App() {
             subtitle="Tokenize, detach and noise, then denoise with the same weights."
           />
 
-          <div className="loop-grid">
-            <div className="card figure-card reveal">
-              <img
-                src="./assets/figures/architecture_uldae_v3.png"
-                alt="UNITE training architecture"
-                loading="lazy"
-              />
-            </div>
+          <div className="card figure-card loop-figure reveal">
+            <img
+              src="./assets/figures/architecture_uldae_v3.png"
+              alt="UNITE training architecture"
+              loading="lazy"
+            />
+          </div>
 
-            <div className="loop-steps">
-              {loopSteps.map((step) => (
-                <article className="card loop-step reveal" key={step.number}>
-                  <span>{step.number}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </article>
-              ))}
-
-              <article className="card detach-card reveal">
-                <p className="card-kicker">Detach matters</p>
-                <h3>Stop-gradient keeps joint training simple and stable.</h3>
-                <p>
-                  It blocks the shortcut through clean latents, so
-                  reconstruction and denoising still train the same shared
-                  weights, but through cleaner backward paths.
-                </p>
+          <div className="loop-steps">
+            {loopSteps.map((step) => (
+              <article className="card loop-step reveal" key={step.number}>
+                <span>{step.number}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
               </article>
-            </div>
+            ))}
+
+            <article className="card detach-card reveal">
+              <p className="card-kicker">Detach matters</p>
+              <h3>It keeps joint training stable.</h3>
+              <p>
+                Denoising no longer shortcuts through the clean latent, while
+                both objectives still update the same shared weights.
+              </p>
+            </article>
           </div>
         </section>
 

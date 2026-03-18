@@ -406,16 +406,18 @@ button {
   background: rgba(255, 255, 255, 0.52);
 }
 
-.loop-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  gap: 1rem;
-  align-items: start;
-}
-
 .loop-steps {
   display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 1rem;
+}
+
+.loop-figure {
+  padding: 1rem;
+  background:
+    linear-gradient(135deg, rgba(39, 79, 134, 0.05), transparent 44%),
+    rgba(255, 251, 246, 0.94);
 }
 
 .loop-step span {
@@ -578,11 +580,14 @@ pre {
   .hero,
   .concept-section,
   .citation-grid,
-  .loop-grid,
   .results-grid,
   .analysis-grid,
   .story-grid {
     grid-template-columns: 1fr;
+  }
+
+  .loop-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .proof-strip,
@@ -611,7 +616,8 @@ pre {
   }
 
   .proof-strip,
-  .sample-grid {
+  .sample-grid,
+  .loop-steps {
     grid-template-columns: 1fr;
   }
 
