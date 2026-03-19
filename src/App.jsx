@@ -256,15 +256,6 @@ function App() {
           <div className="hero-shell">
             <div className="hero-copy">
               <h1>UNITE: End-to-End Training for Unified Tokenization and Latent Denoising</h1>
-              <p className="hero-summary">
-                Single-stage latent diffusion from scratch — one weight-shared encoder for both tokenization and denoising.
-              </p>
-              <div className="hero-tags">
-                <span>Single-stage</span>
-                <span>From scratch</span>
-                <span>No external teacher</span>
-                <span>Shared weights</span>
-              </div>
               <p className="hero-authors">
                 Shivam Duggal*, Xingjian Bai*, Zongze Wu, Richard Zhang, Eli
                 Shechtman, Antonio Torralba, Phillip Isola, William T. Freeman
