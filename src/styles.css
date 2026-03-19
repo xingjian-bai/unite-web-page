@@ -217,6 +217,7 @@ button {
   flex-wrap: wrap;
   gap: 0.8rem;
   margin-top: 1.15rem;
+  justify-content: center;
 }
 
 .button {
