@@ -6,29 +6,28 @@ import { useEffect, useRef, useCallback, useState } from "react";
     ============================================================ */
 
 // ── CONFIG ─────────────────────────────────────────────────────
+const NUM_ROWS = 3;
 const CFG = {
   layout: {
     leftX: 0.08,
     rightX: 0.92,
     encoderX: 0.29,
     decoderX: 0.71,
-    rowYs: [0.22, 0.375, 0.53, 0.685],
-    imgSize: 0.08,
+    rowYs: [0.24, 0.45, 0.66],
+    imgSize: 0.10,
     boxHalf: 0.022,
   },
   blueDots: [
-    { x: 0.525, y: 0.395 },
-    { x: 0.465, y: 0.425 },
-    { x: 0.515, y: 0.470 },
-    { x: 0.475, y: 0.500 },
+    { x: 0.52, y: 0.38 },
+    { x: 0.47, y: 0.45 },
+    { x: 0.51, y: 0.52 },
   ],
   genFinal: [
-    { x: 0.545, y: 0.410 },
-    { x: 0.485, y: 0.380 },
-    { x: 0.535, y: 0.480 },
-    { x: 0.455, y: 0.510 },
+    { x: 0.54, y: 0.39 },
+    { x: 0.48, y: 0.46 },
+    { x: 0.53, y: 0.53 },
   ],
-  genAngles: [0.05 * Math.PI, 0.75 * Math.PI, 1.25 * Math.PI, 1.85 * Math.PI],
+  genAngles: [0.05 * Math.PI, 0.85 * Math.PI, 1.65 * Math.PI],
   colors: {
     steelBlue: "#2c6faa",
     iceBue: "#7bb8d9",
@@ -48,7 +47,7 @@ const CFG = {
 // Pre-compute trajectories
 function buildTrajectories() {
   const out = [];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < NUM_ROWS; i++) {
     const a = CFG.genAngles[i];
     const ep = CFG.genFinal[i];
     const r = 0.25;
@@ -71,8 +70,8 @@ function buildTrajectories() {
 const TRAJS = buildTrajectories();
 
 // Timing helpers
-function totalP1() { return 3 * CFG.phase1.rowDelay + CFG.phase1.decDelay + CFG.phase1.fadeIn + CFG.phase1.freeze; }
-function totalP2() { return 3 * CFG.phase2.trajDelay + CFG.phase2.trajDur + CFG.phase2.decDelay + CFG.phase2.fadeIn + CFG.phase2.freeze; }
+function totalP1() { return (NUM_ROWS - 1) * CFG.phase1.rowDelay + CFG.phase1.decDelay + CFG.phase1.fadeIn + CFG.phase1.freeze; }
+function totalP2() { return (NUM_ROWS - 1) * CFG.phase2.trajDelay + CFG.phase2.trajDur + CFG.phase2.decDelay + CFG.phase2.fadeIn + CFG.phase2.freeze; }
 const easeIO = (t) => { const c = Math.max(0, Math.min(1, t)); return c * c * (3 - 2 * c); };
 
 function lerpColor(a, b, t) {
@@ -104,11 +103,11 @@ export default function LatentAnimation() {
         img.src = src;
       });
     Promise.all([
-      ...Array.from({ length: 4 }, (_, i) => load(`./assets/animation/input_${i}.png`)),
-      ...Array.from({ length: 4 }, (_, i) => load(`./assets/animation/gen_${i}.png`)),
+      ...Array.from({ length: NUM_ROWS }, (_, i) => load(`./assets/animation/input_${i}.png`)),
+      ...Array.from({ length: NUM_ROWS }, (_, i) => load(`./assets/animation/gen_${i}.png`)),
     ]).then((all) => {
-      imgs.current.input = all.slice(0, 4);
-      imgs.current.gen = all.slice(4, 8);
+      imgs.current.input = all.slice(0, NUM_ROWS);
+      imgs.current.gen = all.slice(NUM_ROWS, NUM_ROWS * 2);
       loaded.current = true;
     });
   }, []);
@@ -327,9 +326,9 @@ export default function LatentAnimation() {
     drawText(ctx, "Input", L.leftX, 0.10, CFG.colors.steelBlue, 1, 0.02, "600");
     drawText(ctx, "Reconstructed", L.rightX, 0.10, CFG.colors.steelBlue, 1, 0.02, "600");
 
-    const arrowRads = [0.015, 0.03, -0.015, -0.03];
+    const arrowRads = [0.015, 0.0, -0.015];
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       const rs = i * c.rowDelay;
       const re = el - rs;
       if (re < 0) continue;
@@ -387,7 +386,7 @@ export default function LatentAnimation() {
     drawText(ctx, rightText, L.rightX, 0.10, hdrCol, 1, 0.02, "600");
 
     const dim = 1 - t * 0.7;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
       drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, dim, CFG.colors.steelBlue);
       drawImg(ctx, imgs.current.input[i], L.rightX, y, L.imgSize, dim * 0.3, CFG.colors.steelBlue);
@@ -407,15 +406,15 @@ export default function LatentAnimation() {
     drawText(ctx, "Generated", L.rightX, 0.10, "#555", 1, 0.02, "600");
 
     // Dimmed Phase 1
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       drawImg(ctx, imgs.current.input[i], L.leftX, L.rowYs[i], L.imgSize, 0.3, CFG.colors.steelBlue);
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.3);
     }
 
-    const arrowRads = [0.015, 0.03, -0.015, -0.03];
-    const activeIdx = Math.min(3, Math.floor(el / c.trajDelay));
+    const arrowRads = [0.015, 0.0, -0.015];
+    const activeIdx = Math.min(NUM_ROWS - 1, Math.floor(el / c.trajDelay));
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       const ts = i * c.trajDelay;
       const te = el - ts;
       if (te < 0) continue;
@@ -473,7 +472,7 @@ export default function LatentAnimation() {
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1 - t, 0.03, "800");
 
     // Fade in input
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
       drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, 0.3 + t * 0.5, CFG.colors.steelBlue);
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.3 + t * 0.45);
@@ -483,12 +482,12 @@ export default function LatentAnimation() {
       drawTraj(ctx, i, 1, 0.35 * (1 - t * 0.5));
       drawDot(ctx, CFG.genFinal[i].x, CFG.genFinal[i].y, CFG.colors.burntOrange, 0.8 * (1 - t * 0.3));
       // Phase 3 side-by-side
-      drawImg(ctx, imgs.current.input[i], 0.83, y, 0.06, t * 0.85, CFG.colors.steelBlue);
-      drawImg(ctx, imgs.current.gen[i], 0.93, y, 0.06, t, CFG.colors.burntOrange);
+      drawImg(ctx, imgs.current.input[i], 0.82, y, 0.07, t * 0.85, CFG.colors.steelBlue);
+      drawImg(ctx, imgs.current.gen[i], 0.93, y, 0.07, t, CFG.colors.burntOrange);
     }
     // Sub-headers
     drawText(ctx, "Input", L.leftX, 0.10, "#555", t * 0.8, 0.02, "600");
-    drawText(ctx, "Recon", 0.83, 0.155, CFG.colors.steelBlue, t * 0.85, 0.016, "600");
+    drawText(ctx, "Recon", 0.82, 0.155, CFG.colors.steelBlue, t * 0.85, 0.016, "600");
     drawText(ctx, "Gen", 0.93, 0.155, CFG.colors.burntOrange, t * 0.85, 0.016, "600");
     // Bottom text
     drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", t, 0.026, "800");
@@ -504,17 +503,17 @@ export default function LatentAnimation() {
     const bt = (el % c.breathMs) / c.breathMs;
     drawGaussian(ctx, 0.10 + 0.05 * Math.sin(bt * Math.PI * 2));
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
       drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, 0.8, CFG.colors.steelBlue);
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.75);
       drawTraj(ctx, i, 1, 0.25);
       drawDot(ctx, CFG.genFinal[i].x, CFG.genFinal[i].y, CFG.colors.burntOrange, 0.8);
-      drawImg(ctx, imgs.current.input[i], 0.83, y, 0.06, 0.85, CFG.colors.steelBlue);
-      drawImg(ctx, imgs.current.gen[i], 0.93, y, 0.06, 1, CFG.colors.burntOrange);
+      drawImg(ctx, imgs.current.input[i], 0.82, y, 0.07, 0.85, CFG.colors.steelBlue);
+      drawImg(ctx, imgs.current.gen[i], 0.93, y, 0.07, 1, CFG.colors.burntOrange);
     }
     drawText(ctx, "Input", L.leftX, 0.10, "#555", 0.8, 0.02, "600");
-    drawText(ctx, "Recon", 0.83, 0.155, CFG.colors.steelBlue, 0.85, 0.016, "600");
+    drawText(ctx, "Recon", 0.82, 0.155, CFG.colors.steelBlue, 0.85, 0.016, "600");
     drawText(ctx, "Gen", 0.93, 0.155, CFG.colors.burntOrange, 0.85, 0.016, "600");
     drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", 1, 0.026, "800");
     drawText(ctx, "Tokenization produces z in one deterministic step", 0.5, 0.86, CFG.colors.steelBlue, 0.9, 0.016, "500");
