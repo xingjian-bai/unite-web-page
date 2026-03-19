@@ -317,7 +317,10 @@ button {
 
 .section-heading {
   max-width: 38rem;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 1.2rem;
+  text-align: center;
 }
 
 .section-heading h2 {
@@ -393,7 +396,9 @@ button {
 
 .thesis-copy {
   max-width: 38rem;
-  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .thesis-figure,
@@ -426,6 +431,9 @@ button {
 
 .loop-intro {
   max-width: 38rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .loop-sequence {
@@ -434,6 +442,8 @@ button {
   gap: 0;
   margin-top: 1rem;
   max-width: 38rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .sequence-step {
@@ -728,6 +738,9 @@ button {
 .sample-header {
   max-width: 40rem;
   margin-top: 2.2rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .sample-grid {

@@ -93,11 +93,11 @@ const analysisCards = [
   },
 ];
 
-const bibtex = `@inproceedings{duggal2026unite,
-  title     = {End-to-End Training for Unified Tokenization and Latent Denoising},
-  author    = {Shivam Duggal and Xingjian Bai and Zongze Wu and Richard Zhang and Eli Shechtman and Antonio Torralba and Phillip Isola and William T. Freeman},
-  booktitle = {International Conference on Machine Learning},
-  year      = {2026}
+const bibtex = `@article{duggal2026unite,
+  title   = {End-to-End Training for Unified Tokenization and Latent Denoising},
+  author  = {Shivam Duggal and Xingjian Bai and Zongze Wu and Richard Zhang and Eli Shechtman and Antonio Torralba and Phillip Isola and William T. Freeman},
+  journal = {arXiv preprint arXiv:XXXX.XXXXX},
+  year    = {2026}
 }`;
 
 function SectionHeading({ kicker, title, subtitle, small }) {
@@ -272,9 +272,6 @@ function App() {
               <div className="hero-actions">
                 <a className="button primary" href="./assets/docs/unite-paper.pdf">
                   Paper PDF
-                </a>
-                <a className="button" href="#story">
-                  Main Idea
                 </a>
                 <a className="button" href="https://github.com/ShivamDuggal4/UNITE" target="_blank" rel="noopener noreferrer">
                   GitHub
