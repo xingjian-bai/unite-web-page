@@ -329,8 +329,8 @@ button {
 }
 
 .section-heading-sm h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  line-height: 1.15;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  line-height: 1.2;
 }
 
 .section-subtitle,

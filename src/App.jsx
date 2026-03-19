@@ -381,8 +381,7 @@ function App() {
         <section className="section" id="results">
           <SectionHeading
             kicker="Results"
-            title="No DINO, no adversarial loss, single-stage."
-            subtitle="Our results: ImageNet gFID 2.12 (Base), 1.73 (L), 1.75 (XL) — competitive with DiT, JiT, REPA, and DDT, all without pretrained teachers or multi-stage pipelines."
+            title="No DINO, no adversarial loss."
             small
           />
 
