@@ -329,7 +329,7 @@ function App() {
               <p className="card-kicker">Training</p>
               <h3>One encoder. Two forward passes. One loop.</h3>
               <p className="loop-desc">
-                The Generative Encoder tokenizes an image, then denoises its own noised latents — all in a single training step.
+                Our approach: the Generative Encoder tokenizes an image, then denoises its own noised latents — all in a single training step.
               </p>
             </div>
 
@@ -358,7 +358,7 @@ function App() {
               <p className="card-kicker">Inference</p>
               <h3>Both reconstruction and generation</h3>
               <p className="section-desc">
-                At inference, the same encoder either tokenizes an image for reconstruction
+                Our model: the same encoder either tokenizes an image for reconstruction
                 or iteratively denoises from pure noise for generation — two modes from one model.
               </p>
             </div>
@@ -372,7 +372,7 @@ function App() {
           <SectionHeading
             kicker="Results"
             title="No DINO, no adversarial loss, single-stage."
-            subtitle="ImageNet gFID 2.12 (Base), 1.73 (L), 1.75 (XL) — competitive with DiT, JiT, REPA, and DDT, all without pretrained teachers or multi-stage pipelines."
+            subtitle="Our results: ImageNet gFID 2.12 (Base), 1.73 (L), 1.75 (XL) — competitive with DiT, JiT, REPA, and DDT, all without pretrained teachers or multi-stage pipelines."
             small
           />
 
@@ -412,7 +412,7 @@ function App() {
           <SectionHeading
             kicker="Analysis"
             title="Diving deeper into encoder-denoiser weight sharing"
-            subtitle="Tokenization and denoising are intrinsically aligned — even without shared weights, the two pathways learn similar representations."
+            subtitle="Our insight: tokenization and denoising are intrinsically aligned — even without shared weights, the two pathways learn similar representations."
             small
           />
 
