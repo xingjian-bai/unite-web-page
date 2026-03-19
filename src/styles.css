@@ -268,10 +268,8 @@ button {
   min-height: 100%;
   padding: 0.75rem 0 0;
   border-radius: 0;
-  border: 1px solid rgba(17, 34, 56, 0.08);
-  background:
-    linear-gradient(135deg, rgba(39, 79, 134, 0.05), transparent 44%),
-    rgba(255, 251, 246, 0.94);
+  border: 1px solid rgba(55, 53, 47, 0.09);
+  background: #ffffff;
 }
 
 .hero-figure img {
