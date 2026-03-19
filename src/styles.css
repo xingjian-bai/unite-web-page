@@ -378,6 +378,16 @@ button {
   height: auto;
 }
 
+.animation-panel {
+  margin-top: 2.5rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgba(17, 34, 56, 0.08);
+}
+
+.animation-panel .section-heading {
+  margin-bottom: 1.2rem;
+}
+
 .loop-panel {
   margin-top: 2rem;
   padding-top: 1.6rem;

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import LatentAnimation from "./LatentAnimation";
 
 const navItems = [
   { label: "Idea", href: "#story" },
@@ -219,10 +220,7 @@ function App() {
         <section className="hero reveal">
           <div className="hero-shell">
             <div className="hero-copy">
-              <h1>UNITE</h1>
-              <p className="hero-title">
-                End-to-End Training for Unified Tokenization and Latent Denoising
-              </p>
+              <h1>UNITE: End-to-End Training for Unified Tokenization and Latent Denoising</h1>
               <p className="hero-summary">
                 Single-stage latent diffusion from scratch, with one
                 weight-shared encoder for tokenization and denoising.
@@ -299,6 +297,14 @@ function App() {
                 loading="lazy"
               />
             </div>
+          </div>
+
+          <div className="animation-panel reveal" id="animation">
+            <div className="section-heading">
+              <p className="card-kicker">Interactive visualization</p>
+              <h3>One latent space, two modes</h3>
+            </div>
+            <LatentAnimation />
           </div>
 
           <div className="loop-panel" id="loop">
