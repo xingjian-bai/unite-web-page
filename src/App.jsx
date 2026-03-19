@@ -281,15 +281,6 @@ function App() {
               <LatentAnimation />
             </div>
 
-            <div className="proof-strip">
-              {statCards.map((item) => (
-                <article className="stat-card" key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                  <small>{item.note}</small>
-                </article>
-              ))}
-            </div>
           </div>
         </section>
 
