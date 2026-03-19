@@ -222,8 +222,7 @@ function App() {
             <div className="hero-copy">
               <h1>UNITE: End-to-End Training for Unified Tokenization and Latent Denoising</h1>
               <p className="hero-summary">
-                Single-stage latent diffusion from scratch, with one
-                weight-shared encoder for tokenization and denoising.
+                Single-stage latent diffusion from scratch — one weight-shared encoder for both tokenization and denoising.
               </p>
               <div className="hero-tags">
                 <span>Single-stage</span>

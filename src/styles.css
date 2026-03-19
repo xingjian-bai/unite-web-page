@@ -182,10 +182,11 @@ button {
 }
 
 .hero-summary {
-  max-width: 32rem;
-  margin: 0.8rem 0 0;
-  font-size: 1.02rem;
-  line-height: 1.62;
+  max-width: 42rem;
+  margin: 0.8rem auto 0;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--muted);
 }
 
 .hero-tags {
