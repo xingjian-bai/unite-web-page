@@ -345,7 +345,6 @@ function App() {
 
           <div className="results-grid">
             <GenerationTable />
-            <ReconstructionTable />
           </div>
 
           <div className="sample-header reveal">
