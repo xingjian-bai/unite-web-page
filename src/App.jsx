@@ -331,14 +331,6 @@ function App() {
             </div>
           </div>
 
-          <div className="animation-panel reveal" id="animation">
-            <div className="section-heading">
-              <p className="card-kicker">Interactive visualization</p>
-              <h3>One latent space, two modes</h3>
-            </div>
-            <LatentAnimation />
-          </div>
-
           <div className="loop-panel" id="loop">
             <div className="loop-intro reveal">
               <p className="card-kicker">Training loop</p>
@@ -367,6 +359,14 @@ function App() {
               <span>Detach matters</span>
               <p>It blocks the shortcut through the clean latent.</p>
             </div>
+          </div>
+
+          <div className="animation-panel reveal" id="animation">
+            <div className="section-heading">
+              <p className="card-kicker">Inference: both reconstruction and generation</p>
+              <h3>One latent space, two modes</h3>
+            </div>
+            <LatentAnimation />
           </div>
         </section>
 
