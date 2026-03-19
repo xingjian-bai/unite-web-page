@@ -257,8 +257,9 @@ function App() {
             <div className="hero-copy">
               <h1>UNITE: End-to-End Training for Unified Tokenization and Latent Denoising</h1>
               <p className="hero-authors">
-                Shivam Duggal*, Xingjian Bai*, Zongze Wu, Richard Zhang, Eli
-                Shechtman, Antonio Torralba, Phillip Isola, William T. Freeman
+                Shivam Duggal*, Xingjian Bai*, Zongze Wu, Richard Zhang, Eli Shechtman,
+                <br />
+                Antonio Torralba, Phillip Isola, William T. Freeman
               </p>
               <p className="hero-meta">
                 Massachusetts Institute of Technology · Adobe
