@@ -302,7 +302,7 @@ function App() {
               <p className="card-kicker">Core idea</p>
               <h3>Tokenization is generation with strong observability.</h3>
               <p>
-                UNITE uses one encoder for image-conditioned inference and
+                One encoder for image-conditioned inference and
                 noise-conditioned inference.
               </p>
             </div>
