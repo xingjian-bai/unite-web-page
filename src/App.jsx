@@ -411,7 +411,7 @@ function App() {
         <section className="section" id="analysis">
           <SectionHeading
             kicker="Analysis"
-            title="Why does weight sharing work?"
+            title="Diving deeper into encoder-denoiser weight sharing"
             subtitle="Tokenization and denoising are intrinsically aligned — even without shared weights, the two pathways learn similar representations."
             small
           />
