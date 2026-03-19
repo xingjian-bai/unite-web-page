@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import LatentAnimation from "./LatentAnimation";
 
 const navItems = [
@@ -49,16 +49,16 @@ const statCards = [
 ];
 
 const generationRows = [
-  { method: "JiT-B/16", regime: "single-stage", fid: "3.66", is: "275.1" },
+  { method: "JiT-B/16", regime: "single-stage", fid: "3.66", is: "275.1", section: "Single-stage" },
   { method: "UNITE-B (Ours)", regime: "single-stage", fid: "2.12", is: "294.1", ours: true },
   { method: "JiT-L/16", regime: "single-stage", fid: "2.36", is: "298.5" },
   { method: "UNITE-L (Ours)", regime: "single-stage", fid: "1.73", is: "296.0", ours: true },
   { method: "PixelFlow-XL/4", regime: "single-stage", fid: "1.98", is: "282.1" },
   { method: "JiT-H/16", regime: "single-stage", fid: "1.86", is: "303.4" },
   { method: "UNITE-XL (Ours)", regime: "single-stage", fid: "1.75", is: "309.9", ours: true },
-  { method: "DiT-XL/2", regime: "two-stage", fid: "2.27", is: "278.2" },
+  { method: "DiT-XL/2", regime: "two-stage", fid: "2.27", is: "278.2", section: "Two-stage" },
   { method: "SiT-XL/2", regime: "two-stage", fid: "2.06", is: "277.5" },
-  { method: "REPA-SiT-XL/2", regime: "two-stage + DINOv2", fid: "1.42", is: "305.7" },
+  { method: "REPA-SiT-XL/2", regime: "two-stage + DINOv2", fid: "1.42", is: "305.7", section: "Two-stage + DINOv2" },
   { method: "DDT-XL/2", regime: "two-stage + DINOv2", fid: "1.26", is: "310.6" },
 ];
 
@@ -134,20 +134,27 @@ function GenerationTable() {
             <span>IS ↑</span>
           </div>
           {generationRows.map((row) => (
-            <div className={`table-row ${row.ours ? "table-row-ours" : ""}`} key={row.method}>
-              <span className="cell cell-primary" data-label="Method">
-                {row.method}
-              </span>
-              <span className="cell" data-label="Regime">
-                {row.regime}
-              </span>
-              <strong className="cell cell-strong" data-label="FID ↓">
-                {row.fid}
-              </strong>
-              <span className="cell" data-label="IS ↑">
-                {row.is}
-              </span>
-            </div>
+            <React.Fragment key={row.method}>
+              {row.section && (
+                <div className="table-section-header">
+                  <span>{row.section}</span>
+                </div>
+              )}
+              <div className={`table-row ${row.ours ? "table-row-ours" : ""}`}>
+                <span className="cell cell-primary" data-label="Method">
+                  {row.method}
+                </span>
+                <span className="cell" data-label="Regime">
+                  {row.regime}
+                </span>
+                <strong className="cell cell-strong" data-label="FID ↓">
+                  {row.fid}
+                </strong>
+                <span className="cell" data-label="IS ↑">
+                  {row.is}
+                </span>
+              </div>
+            </React.Fragment>
           ))}
         </div>
       </div>

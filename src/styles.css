@@ -452,30 +452,34 @@ button {
 .sequence-step {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 1rem;
+  gap: 0.6rem;
   align-items: start;
-  padding: 0.95rem 0;
-  border-top: 1px solid rgba(17, 34, 56, 0.1);
+  padding: 0.6rem 0;
+  border-top: 1px solid rgba(17, 34, 56, 0.08);
 }
 
 .sequence-step span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 1.6rem;
+  height: 1.6rem;
   border-radius: 999px;
   background: rgba(39, 79, 134, 0.08);
   color: var(--blue);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .sequence-step h3 {
-  margin: 0.2rem 0 0;
-  font-size: 1.12rem;
+  margin: 0;
+  font-size: 1rem;
   line-height: 1.3;
+}
+
+.sequence-step p {
+  font-size: 0.9rem;
 }
 
 .detach-note {
@@ -723,6 +727,17 @@ button {
   background:
     linear-gradient(135deg, rgba(39, 79, 134, 0.08), transparent 50%),
     rgba(255, 255, 255, 0.86);
+}
+
+.table-section-header {
+  padding: 0.45rem 0.6rem 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-top: 1px solid rgba(55, 53, 47, 0.09);
+  margin-top: 0.3rem;
 }
 
 .cell-primary,

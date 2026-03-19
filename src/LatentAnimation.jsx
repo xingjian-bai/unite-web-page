@@ -38,9 +38,9 @@ const CFG = {
     bg: "transparent",
   },
   // ── Stage timing (ms) — tune independently ──
-  phase1: { rowDelay: 1400, encDelay: 250, dotDelay: 550, lblDelay: 650, decDelay: 850, fadeIn: 450, freeze: 550 },
+  phase1: { rowDelay: 1400, encDelay: 250, dotDelay: 550, lblDelay: 650, decDelay: 850, fadeIn: 450, freeze: 550, popDur: 500, popScale: 2.2 },
   trans12: { duration: 750 },
-  phase2: { trajDelay: 2400, trajDur: 1800, decDelay: 180, fadeIn: 400, freeze: 700 },
+  phase2: { trajDelay: 2400, trajDur: 1800, decDelay: 180, fadeIn: 400, freeze: 700, popDur: 500, popScale: 2.2 },
   trans23: { duration: 1100 },
   phase3: { hold: 7000, breathMs: 3000 },
 };
@@ -337,8 +337,10 @@ export default function LatentAnimation() {
       const bd = CFG.blueDots[i];
       const fadeA = (d) => Math.min(1, Math.max(0, easeIO((re - d) / c.fadeIn)));
 
-      // Input
-      drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, fadeA(0), CFG.colors.steelBlue);
+      // Input — pop-in large then shrink
+      const inputAge = re;
+      const inputPop = inputAge < c.popDur ? c.popScale - (c.popScale - 1) * easeIO(inputAge / c.popDur) : 1;
+      drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize * inputPop, fadeA(0), CFG.colors.steelBlue);
       // E + arrow
       if (re >= c.encDelay) {
         const a = fadeA(c.encDelay);
@@ -362,7 +364,10 @@ export default function LatentAnimation() {
         drawBox(ctx, "D", L.decoderX, y, CFG.colors.steelBlue, a);
         drawArrow(ctx, bd.x + 0.015, bd.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.steelBlue, a, arrowRads[i]);
         drawArrow(ctx, L.decoderX + L.boxHalf + 0.01, y, L.rightX - L.imgSize / 2 - 0.01, y, CFG.colors.steelBlue, a);
-        drawImg(ctx, imgs.current.input[i], L.rightX, y, L.imgSize, a, CFG.colors.steelBlue);
+        // Recon output — pop-in large then shrink
+        const reconAge = re - c.decDelay;
+        const reconPop = reconAge < c.popDur ? c.popScale - (c.popScale - 1) * easeIO(reconAge / c.popDur) : 1;
+        drawImg(ctx, imgs.current.input[i], L.rightX, y, L.imgSize * reconPop, a, CFG.colors.steelBlue);
       }
     }
     return el >= totalP1();
@@ -448,7 +453,10 @@ export default function LatentAnimation() {
           drawBox(ctx, "D", L.decoderX, y, CFG.colors.burntOrange, a);
           drawArrow(ctx, gf.x + 0.015, gf.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.burntOrange, a, arrowRads[i]);
           drawArrow(ctx, L.decoderX + L.boxHalf + 0.01, y, L.rightX - L.imgSize / 2 - 0.01, y, CFG.colors.burntOrange, a);
-          drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize, a, CFG.colors.burntOrange);
+          // Gen output — pop-in large then shrink
+          const genAge = te - c.trajDur - c.decDelay;
+          const genPop = genAge < c.popDur ? c.popScale - (c.popScale - 1) * easeIO(genAge / c.popDur) : 1;
+          drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize * genPop, a, CFG.colors.burntOrange);
         }
       }
     }
