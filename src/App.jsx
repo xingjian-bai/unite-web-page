@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import LatentAnimation from "./LatentAnimation";
 
 const navItems = [
   { label: "Idea", href: "#story" },
   { label: "Results", href: "#results" },
-  { label: "Paper", href: "#citation" },
+  { label: "Citation", href: "#citation" },
 ];
 
 const storyCards = [
@@ -59,20 +59,22 @@ const reconstructionRows = [
 ];
 
 const sampleCards = [
-  { title: "House finch", image: "./assets/samples-web/house-finch.jpg" },
-  { title: "Golden retriever", image: "./assets/samples-web/golden-retriever.jpg" },
-  { title: "Sea anemone", image: "./assets/samples-web/sea-anemone.jpg" },
+  { title: "Class 12: House Finch", image: "./assets/samples-web/house-finch.jpg" },
+  { title: "Class 207: Golden Retriever", image: "./assets/samples-web/golden-retriever.jpg" },
+  { title: "Class 108: Sea Anemone", image: "./assets/samples-web/sea-anemone.jpg" },
 ];
 
 const sampleMontages = [
-  { title: "Common iguana", image: "./assets/samples/summary_039_common_iguana.png" },
-  { title: "Goose", image: "./assets/samples/summary_099_goose.png" },
-  { title: "Pelican", image: "./assets/samples/summary_144_pelican.png" },
-  { title: "Bee", image: "./assets/samples/summary_309_bee.png" },
-  { title: "Candle", image: "./assets/samples/summary_470_candle.png" },
-  { title: "Plane", image: "./assets/samples/summary_725_plane.png" },
-  { title: "Ice cream", image: "./assets/samples/summary_930_ice_cream.png" },
-  { title: "Cauliflower", image: "./assets/samples/summary_947_cauliflower.png" },
+  { title: "Class 12: House Finch", image: "./assets/samples/summary_012_house_finch.png" },
+  { title: "Class 39: Common Iguana", image: "./assets/samples/summary_039_common_iguana.png" },
+  { title: "Class 99: Goose", image: "./assets/samples/summary_099_goose.png" },
+  { title: "Class 108: Sea Anemone", image: "./assets/samples/summary_108_sea_anemone.png" },
+  { title: "Class 144: Pelican", image: "./assets/samples/summary_144_pelican.png" },
+  { title: "Class 207: Golden Retriever", image: "./assets/samples/summary_207_golden_retriever.png" },
+  { title: "Class 309: Bee", image: "./assets/samples/summary_309_bee.png" },
+  { title: "Class 470: Candle", image: "./assets/samples/summary_470_candle.png" },
+  { title: "Class 725: Plane", image: "./assets/samples/summary_725_plane.png" },
+  { title: "Class 930: Ice Cream", image: "./assets/samples/summary_930_ice_cream.png" },
 ];
 
 const analysisCards = [
@@ -173,7 +175,39 @@ function ReconstructionTable() {
   );
 }
 
+function Lightbox({ image, title, onClose }) {
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div className="lightbox-overlay" onClick={onClose}>
+      <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+        <img src={image} alt={title} />
+        <p className="lightbox-caption">{title}</p>
+        <button className="lightbox-close" onClick={onClose} aria-label="Close">&times;</button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
+  const [lightbox, setLightbox] = useState(null);
+
+  const openLightbox = useCallback((image, title) => {
+    setLightbox({ image, title });
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLightbox(null);
+  }, []);
+
   useEffect(() => {
     const nodes = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
@@ -203,6 +237,7 @@ function App() {
 
   return (
     <div className="shell">
+      {lightbox && <Lightbox image={lightbox.image} title={lightbox.title} onClose={closeLightbox} />}
       <header className="site-header">
         <a className="brand" href="#top">
           UNITE: Unified Tokenization and Latent Denoising
@@ -354,7 +389,7 @@ function App() {
 
           <div className="sample-grid">
             {sampleCards.map((card) => (
-              <article className="sample-card reveal" key={card.title}>
+              <article className="sample-card reveal clickable" key={card.title} onClick={() => openLightbox(card.image, card.title)}>
                 <div className="sample-frame">
                   <img src={card.image} alt={card.title} loading="lazy" />
                 </div>
@@ -365,7 +400,7 @@ function App() {
 
           <div className="montage-grid">
             {sampleMontages.map((card) => (
-              <article className="montage-card reveal" key={card.title}>
+              <article className="montage-card reveal clickable" key={card.title} onClick={() => openLightbox(card.image, card.title)}>
                 <div className="montage-frame">
                   <img src={card.image} alt={card.title} loading="lazy" />
                 </div>
@@ -394,17 +429,7 @@ function App() {
           </div>
         </section>
 
-        <section className="section citation-grid" id="citation">
-          <article className="citation-card reveal">
-            <p className="card-kicker">Paper</p>
-            <h3>Paper PDF</h3>
-            <div className="resource-links">
-              <a className="button primary" href="./assets/docs/unite-paper.pdf">
-                Open PDF
-              </a>
-            </div>
-          </article>
-
+        <section className="section citation-section" id="citation">
           <article className="citation-card reveal">
             <div className="citation-head">
               <div>
