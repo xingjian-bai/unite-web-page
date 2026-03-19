@@ -2,8 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import LatentAnimation from "./LatentAnimation";
 
 const navItems = [
-  { label: "Idea", href: "#story" },
+  { label: "Core Idea", href: "#idea" },
+  { label: "Training", href: "#loop" },
+  { label: "Inference", href: "#animation" },
   { label: "Results", href: "#results" },
+  { label: "Analysis", href: "#analysis" },
   { label: "Citation", href: "#citation" },
 ];
 
