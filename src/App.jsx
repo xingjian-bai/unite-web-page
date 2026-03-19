@@ -294,19 +294,22 @@ function App() {
         </section>
 
         <section className="section opening-section" id="story">
-          <SectionHeading
-            kicker="Opening"
-            title="One shared encoder replaces two-stage training"
-          />
-
-          <div className="narrative-band reveal">
-            {storyCards.map((card) => (
-              <article className="narrative-step" key={card.title}>
-                <p className="card-kicker">{card.eyebrow}</p>
-                <h3>{card.title}</h3>
-                {card.body ? <p>{card.body}</p> : null}
-              </article>
-            ))}
+          <div className="abstract-block reveal">
+            <h2 className="abstract-heading">Abstract</h2>
+            <p className="abstract-text">
+              Latent diffusion models enable high-fidelity synthesis by operating in learned latent spaces.
+              However, training state-of-the-art models requires complex staging: a tokenizer must first be trained,
+              before a diffusion model can operate in its frozen latent space.
+              We propose <strong>UNITE</strong> — an architecture for <em>unified tokenization and latent diffusion</em>.
+              UNITE uses a single <strong>Generative Encoder</strong> that serves as both image tokenizer and latent
+              generator via weight sharing. Our key insight is that tokenization and generation are the same latent
+              inference problem under different conditioning: tokenization infers latents from fully observed images,
+              whereas generation infers them from noise with class or text conditioning.
+              We introduce a single-stage training procedure that jointly optimizes both tasks via two forward passes
+              through the shared encoder. Across image and molecule modalities, UNITE achieves near state-of-the-art
+              performance <em>without</em> adversarial losses or pretrained encoders (e.g., DINO), reaching
+              FID <strong>2.27</strong> and <strong>1.82</strong> for Base and XL models on ImageNet 256×256.
+            </p>
           </div>
 
           <div className="thesis-panel" id="idea">

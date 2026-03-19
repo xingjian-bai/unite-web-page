@@ -283,6 +283,40 @@ button {
   scroll-margin-top: 6.5rem;
 }
 
+/* Abstract block */
+.abstract-block {
+  max-width: 42rem;
+  margin: 0 auto 2.5rem;
+  padding: 2rem 2.2rem;
+  border-left: 3px solid var(--ink);
+  background: #fafafa;
+  border-radius: 0 8px 8px 0;
+}
+
+.abstract-heading {
+  margin: 0 0 0.9rem;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.abstract-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.abstract-text strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.abstract-text em {
+  font-style: italic;
+}
+
 .section-heading {
   max-width: 38rem;
   margin-bottom: 1.2rem;
