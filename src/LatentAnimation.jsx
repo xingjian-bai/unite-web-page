@@ -462,6 +462,11 @@ export default function LatentAnimation() {
     return el >= totalP2();
   }, [drawGaussian, drawImg, drawBox, drawArrow, drawDot, drawText, drawTraj]);
 
+  // Unified phase layout: large recon left, large gen right
+  const P3_IMG = 0.15;
+  const P3_LEFT = 0.14;
+  const P3_RIGHT = 0.86;
+
   const runT23 = useCallback((ctx, el) => {
     const dur = CFG.trans23.duration;
     const t = easeIO(Math.min(1, el / dur));
@@ -471,24 +476,22 @@ export default function LatentAnimation() {
     // Fade title
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1 - t, 0.03, "800");
 
-    // Fade in input
     for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
-      drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, 0.3 + t * 0.5, CFG.colors.steelBlue);
+      // Fade out P2 positioned images
+      drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, 0.3 * (1 - t), CFG.colors.steelBlue);
+      drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize, 0.5 * (1 - t), CFG.colors.burntOrange);
+      // Keep dots + trajectories
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.3 + t * 0.45);
-      // Fading gen output
-      drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize, (1 - t) * 0.5, CFG.colors.burntOrange);
-      // Fading trajectories
-      drawTraj(ctx, i, 1, 0.35 * (1 - t * 0.5));
-      drawDot(ctx, CFG.genFinal[i].x, CFG.genFinal[i].y, CFG.colors.burntOrange, 0.8 * (1 - t * 0.3));
-      // Phase 3 side-by-side
-      drawImg(ctx, imgs.current.input[i], 0.81, y, 0.08, t * 0.85, CFG.colors.steelBlue);
-      drawImg(ctx, imgs.current.gen[i], 0.92, y, 0.08, t, CFG.colors.burntOrange);
+      drawTraj(ctx, i, 1, 0.25 + t * 0.1);
+      drawDot(ctx, CFG.genFinal[i].x, CFG.genFinal[i].y, CFG.colors.burntOrange, 0.5 + t * 0.3);
+      // Fade in large recon (left) and gen (right)
+      drawImg(ctx, imgs.current.input[i], P3_LEFT, y, P3_IMG, t * 0.9, CFG.colors.steelBlue);
+      drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, t, CFG.colors.burntOrange);
     }
-    // Sub-headers
-    drawText(ctx, "Input", L.leftX, 0.10, "#555", t * 0.8, 0.02, "600");
-    drawText(ctx, "Recon", 0.81, 0.155, CFG.colors.steelBlue, t * 0.85, 0.016, "600");
-    drawText(ctx, "Gen", 0.93, 0.155, CFG.colors.burntOrange, t * 0.85, 0.016, "600");
+    // Headers
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.14, CFG.colors.steelBlue, t * 0.9, 0.018, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.14, CFG.colors.burntOrange, t * 0.9, 0.018, "600");
     // Bottom text
     drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", t, 0.026, "800");
     drawText(ctx, "Tokenization produces z in one deterministic step", 0.5, 0.86, CFG.colors.steelBlue, t * 0.9, 0.016, "500");
@@ -505,16 +508,16 @@ export default function LatentAnimation() {
 
     for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
-      drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, 0.8, CFG.colors.steelBlue);
+      // Dots + trajectories in center
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.75);
-      drawTraj(ctx, i, 1, 0.25);
+      drawTraj(ctx, i, 1, 0.35);
       drawDot(ctx, CFG.genFinal[i].x, CFG.genFinal[i].y, CFG.colors.burntOrange, 0.8);
-      drawImg(ctx, imgs.current.input[i], 0.81, y, 0.08, 0.85, CFG.colors.steelBlue);
-      drawImg(ctx, imgs.current.gen[i], 0.92, y, 0.08, 1, CFG.colors.burntOrange);
+      // Large recon left, large gen right
+      drawImg(ctx, imgs.current.input[i], P3_LEFT, y, P3_IMG, 0.9, CFG.colors.steelBlue);
+      drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, 1, CFG.colors.burntOrange);
     }
-    drawText(ctx, "Input", L.leftX, 0.10, "#555", 0.8, 0.02, "600");
-    drawText(ctx, "Recon", 0.81, 0.155, CFG.colors.steelBlue, 0.85, 0.016, "600");
-    drawText(ctx, "Gen", 0.93, 0.155, CFG.colors.burntOrange, 0.85, 0.016, "600");
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.14, CFG.colors.steelBlue, 0.9, 0.018, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.14, CFG.colors.burntOrange, 0.9, 0.018, "600");
     drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", 1, 0.026, "800");
     drawText(ctx, "Tokenization produces z in one deterministic step", 0.5, 0.86, CFG.colors.steelBlue, 0.9, 0.016, "500");
     drawText(ctx, "Generation recovers z through learned iterative denoising", 0.5, 0.895, CFG.colors.burntOrange, 0.9, 0.016, "500");
