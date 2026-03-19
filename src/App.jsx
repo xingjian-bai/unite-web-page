@@ -261,7 +261,7 @@ function App() {
                 Shechtman, Antonio Torralba, Phillip Isola, William T. Freeman
               </p>
               <p className="hero-meta">
-                Massachusetts Institute of Technology · Adobe · * equal contribution
+                Massachusetts Institute of Technology · Adobe
               </p>
               <div className="hero-actions">
                 <a className="button primary" href="./assets/docs/unite-paper.pdf">
