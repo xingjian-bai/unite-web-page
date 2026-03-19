@@ -100,9 +100,9 @@ const bibtex = `@inproceedings{duggal2026unite,
   year      = {2026}
 }`;
 
-function SectionHeading({ kicker, title, subtitle }) {
+function SectionHeading({ kicker, title, subtitle, small }) {
   return (
-    <div className="section-heading reveal">
+    <div className={`section-heading reveal${small ? " section-heading-sm" : ""}`}>
       <p className="section-kicker">{kicker}</p>
       <h2>{title}</h2>
       {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
@@ -364,8 +364,9 @@ function App() {
         <section className="section" id="results">
           <SectionHeading
             kicker="Results"
-            title="No DINO, no adversarial loss, single-stage"
+            title="No DINO, no adversarial loss, single-stage."
             subtitle="ImageNet gFID 2.27 (Base) and 1.82 (XL) — competitive with DiT, RAE, JiT, and REPA, all without pretrained teachers or multi-stage pipelines."
+            small
           />
 
           <div className="results-grid">

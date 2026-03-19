@@ -325,6 +325,11 @@ button {
   line-height: 0.95;
 }
 
+.section-heading-sm h2 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+
 .section-subtitle,
 .section-desc {
   margin: 0.8rem 0 0;
