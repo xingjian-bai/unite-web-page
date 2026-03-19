@@ -88,7 +88,7 @@ export default function LatentAnimation() {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const stateRef = useRef({ phase: 0, t0: 0, running: true, raf: null, size: 0 });
-  const [phaseLabel, setPhaseLabel] = useState("Phase 1 / 3");
+  const [phaseLabel, setPhaseLabel] = useState("Phase 1: Recon");
 
   // Image refs
   const imgs = useRef({ input: [], gen: [] });
@@ -517,11 +517,11 @@ export default function LatentAnimation() {
 
   // ── Main loop ────────────────────────────────────────────────
   const phases = useRef([
-    { name: "p1", run: null, label: "Phase 1 / 3" },
-    { name: "t12", run: null, label: "Transition" },
-    { name: "p2", run: null, label: "Phase 2 / 3" },
-    { name: "t23", run: null, label: "Transition" },
-    { name: "p3", run: null, label: "Phase 3 / 3" },
+    { name: "p1", run: null, label: "Phase 1: Recon" },
+    { name: "t12", run: null, label: "Phase 1: Recon" },
+    { name: "p2", run: null, label: "Phase 2: Latent Gen" },
+    { name: "t23", run: null, label: "Phase 2: Latent Gen" },
+    { name: "p3", run: null, label: "Unified" },
   ]);
   // Update run functions on every render
   phases.current[0].run = runP1;
@@ -573,13 +573,19 @@ export default function LatentAnimation() {
     return () => cancelAnimationFrame(S.raf);
   }, [runP1, runT12, runP2, runT23, runP3]);
 
-  // Controls
-  const restart = () => {
-    stateRef.current.phase = 0;
+  // Controls — jump to a specific phase
+  const jumpTo = (phaseIndex, label) => {
+    stateRef.current.phase = phaseIndex;
     stateRef.current.t0 = performance.now();
     stateRef.current.running = true;
-    setPhaseLabel("Phase 1 / 3");
+    setPhaseLabel(label);
   };
+
+  const phaseButtons = [
+    { label: "Recon", phase: 0, display: "Phase 1: Recon" },
+    { label: "Latent Gen", phase: 2, display: "Phase 2: Latent Gen" },
+    { label: "Unified", phase: 4, display: "Unified" },
+  ];
 
   return (
     <div
@@ -606,26 +612,34 @@ export default function LatentAnimation() {
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
-          gap: 6,
-          background: "rgba(255,255,255,0.85)",
-          padding: "5px 10px",
-          borderRadius: 16,
+          gap: 4,
+          background: "rgba(255,255,255,0.9)",
+          padding: "4px 6px",
+          borderRadius: 20,
           fontSize: 12,
           zIndex: 10,
+          backdropFilter: "blur(8px)",
         }}
       >
-        <button onClick={() => { stateRef.current.running = true; }} style={btnStyle}>Play</button>
-        <button onClick={() => { stateRef.current.running = false; }} style={btnStyle}>Pause</button>
-        <button onClick={restart} style={btnStyle}>Restart</button>
-        <span style={{ padding: "4px 8px", color: "#555", fontWeight: 600, fontSize: 11 }}>{phaseLabel}</span>
+        {phaseButtons.map((btn) => (
+          <button
+            key={btn.label}
+            onClick={() => jumpTo(btn.phase, btn.display)}
+            style={{
+              ...btnStyle,
+              background: phaseLabel === btn.display ? "#2c6faa" : "rgba(55,53,47,0.08)",
+              color: phaseLabel === btn.display ? "#fff" : "#555",
+            }}
+          >
+            {btn.label}
+          </button>
+        ))}
       </div>
     </div>
   );
 }
 
 const btnStyle = {
-  background: "#2c6faa",
-  color: "#fff",
   border: "none",
   padding: "4px 10px",
   borderRadius: 8,
