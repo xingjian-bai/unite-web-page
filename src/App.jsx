@@ -381,7 +381,7 @@ function App() {
               </p>
             </div>
             <div className="hero-figure">
-              <img src="./assets/figures/teaser2.png" alt="UNITE teaser figure" loading="lazy" />
+              <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
             </div>
           </div>
         </section>
