@@ -70,20 +70,17 @@ const reconstructionRows = [
   { method: "RAE", setup: "adv. + DINOv2", rfid: "0.58" },
 ];
 
-const sampleCards = [
-  { title: "Class 12: House Finch", image: "./assets/samples-web/house-finch.jpg" },
-  { title: "Class 207: Golden Retriever", image: "./assets/samples-web/golden-retriever.jpg" },
-  { title: "Class 108: Sea Anemone", image: "./assets/samples-web/sea-anemone.jpg" },
+const featuredSamples = [
+  { title: "Class 108: Sea Anemone", image: "./assets/samples/summary_108_sea_anemone.png" },
+  { title: "Class 309: Bee", image: "./assets/samples/summary_309_bee.png" },
 ];
 
-const sampleMontages = [
+const gridSamples = [
   { title: "Class 12: House Finch", image: "./assets/samples/summary_012_house_finch.png" },
   { title: "Class 39: Common Iguana", image: "./assets/samples/summary_039_common_iguana.png" },
   { title: "Class 99: Goose", image: "./assets/samples/summary_099_goose.png" },
-  { title: "Class 108: Sea Anemone", image: "./assets/samples/summary_108_sea_anemone.png" },
   { title: "Class 144: Pelican", image: "./assets/samples/summary_144_pelican.png" },
   { title: "Class 207: Golden Retriever", image: "./assets/samples/summary_207_golden_retriever.png" },
-  { title: "Class 309: Bee", image: "./assets/samples/summary_309_bee.png" },
   { title: "Class 470: Candle", image: "./assets/samples/summary_470_candle.png" },
   { title: "Class 725: Pitcher", image: "./assets/samples/summary_725_plane.png" },
   { title: "Class 930: French Loaf", image: "./assets/samples/summary_930_ice_cream.png" },
@@ -405,21 +402,21 @@ function App() {
             <h3>Samples</h3>
           </div>
 
-          <div className="sample-grid">
-            {sampleCards.map((card) => (
+          <div className="samples-featured">
+            {featuredSamples.map((card) => (
               <article className="sample-card reveal clickable" key={card.title} onClick={() => openLightbox(card.image, card.title)}>
                 <div className="sample-frame">
                   <img src={card.image} alt={card.title} loading="lazy" />
                 </div>
-                <h3>{card.title}</h3>
+                <p>{card.title}</p>
               </article>
             ))}
           </div>
 
-          <div className="montage-grid">
-            {sampleMontages.map((card) => (
-              <article className="montage-card reveal clickable" key={card.title} onClick={() => openLightbox(card.image, card.title)}>
-                <div className="montage-frame">
+          <div className="samples-grid-small">
+            {gridSamples.map((card) => (
+              <article className="sample-card reveal clickable" key={card.title} onClick={() => openLightbox(card.image, card.title)}>
+                <div className="sample-frame">
                   <img src={card.image} alt={card.title} loading="lazy" />
                 </div>
                 <p>{card.title}</p>
