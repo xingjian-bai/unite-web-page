@@ -426,15 +426,24 @@ export default function LatentAnimation() {
       const prog = Math.min(1, te / c.trajDur);
       const done = prog >= 1;
 
+      // GE box on trajectory midpoint
+      const geMid = TRAJS[i][2]; // waypoint at ~40% along curve
+
       // Completed trajs
       if (i < activeIdx) {
         drawTraj(ctx, i, 1, 0.35);
+        drawBox(ctx, "GE", geMid.x, geMid.y, CFG.colors.burntOrange, 0.35);
         const da = 0.5;
         drawBox(ctx, "D", L.decoderX, y, CFG.colors.burntOrange, da);
         drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize, da, CFG.colors.burntOrange);
       } else {
         // Active traj
         drawTraj(ctx, i, prog, 0.9);
+
+        // GE box appears when trajectory reaches midpoint
+        if (prog >= 0.4) {
+          drawBox(ctx, "GE", geMid.x, geMid.y, CFG.colors.burntOrange, 0.9);
+        }
 
         // Timestep labels
         const tsIdx = [0, 3, 5];
