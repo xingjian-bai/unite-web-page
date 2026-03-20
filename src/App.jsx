@@ -345,9 +345,10 @@ function App() {
           <div className="loop-panel" id="loop">
             <div className="loop-intro reveal">
               <p className="card-kicker">Training</p>
-              <h3>One encoder. Two forward passes. One loop.</h3>
+              <h3>Training pipeline</h3>
               <p className="loop-desc">
-                Our approach: the Generative Encoder tokenizes an image, then denoises its own noised latents — all in a single training step.
+                Pass 1: the Generative Encoder tokenizes an image into latents, which the decoder reconstructs back to pixels.
+                Pass 2: those same latents are noised, and the <em>same</em> Generative Encoder denoises them — learning to generate by denoising its own representations.
               </p>
             </div>
 
@@ -362,9 +363,11 @@ function App() {
             <div className="loop-sequence">
               {loopSteps.map((step) => (
                 <article className="sequence-step reveal" key={step.number}>
+                  <div>
+                    <h3>{step.title}</h3>
+                    {step.body ? <p>{step.body}</p> : null}
+                  </div>
                   <span>{step.number}</span>
-                  <h3>{step.title}</h3>
-                  {step.body ? <p>{step.body}</p> : null}
                 </article>
               ))}
             </div>
@@ -389,7 +392,7 @@ function App() {
         <section className="section" id="results">
           <SectionHeading
             kicker="Results"
-            title="No DINO, no adversarial loss."
+            title="Strong ImageNet generation"
             small
           />
 

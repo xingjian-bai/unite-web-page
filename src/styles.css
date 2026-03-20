@@ -448,12 +448,13 @@ button {
   margin-top: 1rem;
   max-width: 38rem;
   margin-left: auto;
-  margin-right: auto;
+  margin-right: 0;
+  text-align: right;
 }
 
 .sequence-step {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr auto;
   gap: 0.6rem;
   align-items: start;
   padding: 0.6rem 0;
