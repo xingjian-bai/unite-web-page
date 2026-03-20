@@ -407,12 +407,11 @@ button {
 
 .thesis-figure,
 .loop-panel-figure {
-  margin-top: 0.8rem;
+  margin-top: 1.2rem;
   margin-left: auto;
   margin-right: auto;
-  padding: 0.9rem 0 0;
+  padding: 0;
   max-width: var(--page-width);
-  text-align: center;
 }
 
 .thesis-figure img,
@@ -790,24 +789,22 @@ button {
 }
 
 .sample-frame {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 7 / 3;
   border-radius: 16px;
   background: #f5f5f5;
   border: 1px solid rgba(17, 34, 56, 0.08);
 }
 
 .montage-frame {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 7 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem;
+  padding: 0;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(17, 34, 56, 0.08);
-  background:
-    linear-gradient(135deg, rgba(44, 111, 170, 0.03), transparent 42%),
-    #f5f5f5;
+  background: #f5f5f5;
 }
 
 .montage-frame img {
@@ -846,9 +843,7 @@ button {
 }
 
 .analysis-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
   padding: 0;
   border: none;
 }
@@ -860,7 +855,6 @@ button {
 
 .analysis-frame img {
   height: auto;
-  object-fit: contain;
 }
 
 .analysis-card h3 {
