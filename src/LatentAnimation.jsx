@@ -647,7 +647,9 @@ export default function LatentAnimation() {
             onClick={() => jumpTo(btn.phase, btn.display)}
             style={{
               ...btnStyle,
-              background: phaseLabel === btn.display ? "#2c6faa" : "rgba(55,53,47,0.08)",
+              background: phaseLabel === btn.display
+                ? (btn.label === "Latent Gen" ? CFG.colors.burntOrange : "#2c6faa")
+                : "rgba(55,53,47,0.08)",
               color: phaseLabel === btn.display ? "#fff" : "#555",
             }}
           >
