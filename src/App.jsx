@@ -375,15 +375,15 @@ function App() {
           </div>
 
           <div className="animation-panel reveal" id="animation">
-            <div className="section-heading">
+            <div className="loop-intro">
               <p className="card-kicker">Inference</p>
-              <h3>Both reconstruction and generation</h3>
-              <p className="section-desc">
-                Our model: the same encoder either tokenizes an image for reconstruction
-                or iteratively denoises from pure noise for generation — two modes from one model.
+              <h3>Reconstruction and generation from one model</h3>
+              <p className="loop-desc">
+                For tokenization, the Generative Encoder maps an image to latents in a single forward pass; the decoder reconstructs pixels.
+                For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the same encoder.
               </p>
             </div>
-            <div className="hero-figure">
+            <div className="loop-panel-figure">
               <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
             </div>
           </div>
@@ -392,7 +392,7 @@ function App() {
         <section className="section" id="results">
           <SectionHeading
             kicker="Results"
-            title="Strong ImageNet generation"
+            title="Single-stage, end-to-end — no pre-trained DINO, no adversarial loss"
             small
           />
 

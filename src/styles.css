@@ -410,6 +410,7 @@ button {
   margin-right: auto;
   padding: 0.9rem 0 0;
   max-width: var(--page-width);
+  text-align: center;
 }
 
 .thesis-figure img,
