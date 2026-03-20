@@ -89,18 +89,18 @@ const gridSamples = [
 const analysisCards = [
   {
     title: "Tokenization and denoising are intrinsically aligned",
-    body: "Both the weight-shared Generative Encoder and a separate encoder–denoiser variant exhibit high layer-wise alignment (CKNNA/CKA), especially in later layers. Architectural choices — per-block normalization, matched conditioning interfaces, and conservative optimization — further strengthen this alignment. When the two tasks already align, weight sharing becomes a principled way to remove redundancy.",
+    body: "Both the weight-shared Generative Encoder and a separate encoder–denoiser variant exhibit high layer-wise CKNNA/CKA alignment, indicating that tokenization and denoising are intrinsically aligned tasks. This clarifies the role of weight sharing: when the two tasks already align, parameter tying becomes a principled way to remove redundancy in the reusable attention and MLP sublayers.",
     image: "./assets/figures/cka_cknna_ablation.png",
   },
   {
-    title: "Weight sharing achieves the best rFID / gFID trade-off",
-    body: "Under weight sharing, increasing the number of flow iterations consistently improves generation fidelity while maintaining reconstruction quality. Weight sharing itself acts as a natural coupling mechanism between the two tasks, reducing the need for loss-weight tuning.",
+    title: "Weight sharing yields the best reconstruction–generation trade-off",
+    body: "While a separate encoder–denoiser ablation is competitive, parameter tying yields the best overall rFID / gFID trade-off. Under weight sharing, increasing the number of flow iterations consistently improves generation fidelity — reducing gFID from 3.33 to 2.12 — while maintaining or slightly improving reconstruction, suggesting the latent space becomes more sampleable without sacrificing information.",
     image: "./assets/figures/stop_grad_ablations_sep_vs_ours.png",
   },
   {
-    title: "Stop-gradient yields cleaner denoising trajectories",
-    body: "Stopping denoising gradients through the clean latent preserves a more cleanly shared representation between tokenization and generation. The stop-gradient variants produce markedly cleaner intermediate denoised reconstructions with higher PSNR across all noise levels.",
-    image: "./assets/figures/denoising_analysis.png",
+    title: "Stop-gradient preserves cleaner shared representations",
+    body: "Without stop-gradient, CKA and cosine-similarity alignment between the tokenization and denoising pathways drops, and intermediate denoised reconstructions become noticeably noisier. Stopping denoising gradients through the clean latent helps preserve a more cleanly shared representation between the two modes.",
+    image: "./assets/figures/denoising_analysis_v2.png",
   },
 ];
 
@@ -434,8 +434,8 @@ function App() {
         <section className="section" id="analysis">
           <SectionHeading
             kicker="Analysis"
-            title="Diving deeper into encoder-denoiser weight sharing"
-            subtitle="Our insight: tokenization and denoising are intrinsically aligned — even without shared weights, the two pathways learn similar representations."
+            title="Analyzing the Generative Encoder"
+            subtitle="Parameter tying suggests the model may develop a common latent language — shared features that simultaneously support reconstruction and generation. We study two ablations to isolate the roles of weight sharing and gradient flow."
             small
           />
 
