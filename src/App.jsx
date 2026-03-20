@@ -305,7 +305,7 @@ function App() {
             </div>
 
             <div className="hero-figure">
-              <LatentAnimation />
+              <img src="./assets/figures/teaser2.png" alt="UNITE teaser figure" loading="lazy" />
             </div>
 
           </div>
@@ -336,6 +336,9 @@ function App() {
                 support both — conditioning on an image yields a near-deterministic latent,
                 while starting from noise yields a broader distribution for sampling.
               </p>
+            </div>
+            <div className="reveal" style={{ marginTop: "1.5rem" }}>
+              <LatentAnimation />
             </div>
           </div>
 

@@ -351,7 +351,7 @@ export default function LatentAnimation() {
       if (re >= c.dotDelay) {
         const a = fadeA(c.dotDelay);
         drawDot(ctx, bd.x, bd.y, CFG.colors.steelBlue, a);
-        drawArrow(ctx, L.encoderX + L.boxHalf + 0.01, y, bd.x - 0.015, bd.y, CFG.colors.steelBlue, a, 0.015);
+        drawArrow(ctx, L.encoderX + L.boxHalf + 0.01, y, bd.x - 0.01, bd.y, CFG.colors.steelBlue, a, 0.015);
       }
       // "1 pass"
       if (re >= c.lblDelay) {
@@ -362,7 +362,7 @@ export default function LatentAnimation() {
       if (re >= c.decDelay) {
         const a = fadeA(c.decDelay);
         drawBox(ctx, "D", L.decoderX, y, CFG.colors.steelBlue, a);
-        drawArrow(ctx, bd.x + 0.015, bd.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.steelBlue, a, arrowRads[i]);
+        drawArrow(ctx, bd.x + 0.01, bd.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.steelBlue, a, arrowRads[i]);
         drawArrow(ctx, L.decoderX + L.boxHalf + 0.01, y, L.rightX - L.imgSize / 2 - 0.01, y, CFG.colors.steelBlue, a);
         // Recon output — pop-in large then shrink
         const reconAge = re - c.decDelay;
@@ -460,7 +460,7 @@ export default function LatentAnimation() {
           const a = Math.min(1, easeIO((te - c.trajDur - c.decDelay) / c.fadeIn));
           const gf = CFG.genFinal[i];
           drawBox(ctx, "D", L.decoderX, y, CFG.colors.burntOrange, a);
-          drawArrow(ctx, gf.x + 0.015, gf.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.burntOrange, a, arrowRads[i]);
+          drawArrow(ctx, gf.x + 0.01, gf.y, L.decoderX - L.boxHalf - 0.01, y, CFG.colors.burntOrange, a, arrowRads[i]);
           drawArrow(ctx, L.decoderX + L.boxHalf + 0.01, y, L.rightX - L.imgSize / 2 - 0.01, y, CFG.colors.burntOrange, a);
           // Gen output — pop-in large then shrink
           const genAge = te - c.trajDur - c.decDelay;
