@@ -353,11 +353,6 @@ export default function LatentAnimation() {
         drawDot(ctx, bd.x, bd.y, CFG.colors.steelBlue, a);
         drawArrow(ctx, L.encoderX + L.boxHalf + 0.01, y, bd.x - 0.01, bd.y, CFG.colors.steelBlue, a, 0.015);
       }
-      // "1 pass"
-      if (re >= c.lblDelay) {
-        const a = fadeA(c.lblDelay);
-        drawText(ctx, "1 pass", L.leftX + 0.05, y - 0.035, CFG.colors.iceBue, a * 0.85, 0.016, "italic 500");
-      }
       // D + arrow + output
       if (re >= c.decDelay) {
         const a = fadeA(c.decDelay);
@@ -423,13 +418,38 @@ export default function LatentAnimation() {
       const prog = Math.min(1, te / c.trajDur);
       const done = prog >= 1;
 
-      // GE box on trajectory midpoint
-      const geMid = TRAJS[i][2]; // waypoint at ~40% along curve
+      // GE box between waypoints (on the edge, not on a node)
+      const geWpA = TRAJS[i][1]; // between wp1 and wp2
+      const geWpB = TRAJS[i][2];
+      const gePos = { x: (geWpA.x + geWpB.x) / 2, y: (geWpA.y + geWpB.y) / 2 };
+
+      // Per-trajectory, per-label offsets for t= labels
+      // Each entry: [waypointIndex, label, dx, dy]
+      const labelOffsets = [
+        // Traj 0: curves from bottom-right to upper-center
+        [
+          [0, "t=1.0", 0.035, 0.005],
+          [3, "t=0.5", 0.035, -0.015],
+          [5, "t=0.0", 0.035, -0.015],
+        ],
+        // Traj 1: goes from left to center (mostly horizontal)
+        [
+          [0, "t=1.0", -0.035, 0.025],
+          [3, "t=0.5", 0.0, 0.028],
+          [5, "t=0.0", 0.035, 0.012],
+        ],
+        // Traj 2: curves from upper-right down to center
+        [
+          [0, "t=1.0", 0.035, -0.01],
+          [3, "t=0.5", -0.045, 0.01],
+          [5, "t=0.0", 0.035, 0.015],
+        ],
+      ];
 
       // Completed trajs
       if (i < activeIdx) {
         drawTraj(ctx, i, 1, 0.35);
-        drawBox(ctx, "GE", geMid.x, geMid.y, CFG.colors.burntOrange, 0.35);
+        drawBox(ctx, "GE", gePos.x, gePos.y, CFG.colors.burntOrange, 0.35);
         const da = 0.5;
         drawBox(ctx, "D", L.decoderX, y, CFG.colors.burntOrange, da);
         drawImg(ctx, imgs.current.gen[i], L.rightX, y, L.imgSize, da, CFG.colors.burntOrange);
@@ -437,21 +457,19 @@ export default function LatentAnimation() {
         // Active traj
         drawTraj(ctx, i, prog, 0.9);
 
-        // GE box appears when trajectory reaches midpoint
-        if (prog >= 0.4) {
-          drawBox(ctx, "GE", geMid.x, geMid.y, CFG.colors.burntOrange, 0.9);
+        // GE box appears when trajectory passes ~30%
+        if (prog >= 0.3) {
+          drawBox(ctx, "GE", gePos.x, gePos.y, CFG.colors.burntOrange, 0.9);
         }
 
-        // Timestep labels
-        const tsIdx = [0, 3, 5];
-        const tsText = ["t=1.0", "t=0.5", "t=0.0"];
-        for (let j = 0; j < tsIdx.length; j++) {
-          const wpProg = tsIdx[j] / 5;
+        // Timestep labels with per-trajectory offsets
+        const labels = labelOffsets[i];
+        for (let j = 0; j < labels.length; j++) {
+          const [wpIdx, text, dx, dy] = labels[j];
+          const wpProg = wpIdx / 5;
           if (prog >= wpProg) {
-            const wp = TRAJS[i][tsIdx[j]];
-            const offX = (i % 2 === 0) ? 0.03 : -0.06;
-            const offY = (i < 2) ? -0.02 : 0.025;
-            drawText(ctx, tsText[j], wp.x + offX, wp.y + offY, CFG.colors.burntOrange, 0.85, 0.014, "bold 700");
+            const wp = TRAJS[i][wpIdx];
+            drawText(ctx, text, wp.x + dx, wp.y + dy, CFG.colors.burntOrange, 0.85, 0.014, "bold 700");
           }
         }
 
