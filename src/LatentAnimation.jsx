@@ -253,12 +253,12 @@ export default function LatentAnimation() {
     ctx.globalAlpha = 1;
   }, []);
 
-  const drawText = useCallback((ctx, text, cx, cy, color, alpha, size, weight) => {
+  const drawText = useCallback((ctx, text, cx, cy, color, alpha, size, weight, family) => {
     if (alpha < 0.01) return;
     const s = stateRef.current.size;
     ctx.globalAlpha = alpha;
     ctx.fillStyle = color;
-    ctx.font = `${weight || "600"} ${(size || 0.022) * s}px Inter, sans-serif`;
+    ctx.font = `${weight || "600"} ${(size || 0.022) * s}px ${family || "Inter, sans-serif"}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(text, cx * s, cy * s);
@@ -477,7 +477,7 @@ export default function LatentAnimation() {
 
     // Fade out P2 title, fade in UNITE title
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1 - t, 0.03, "800");
-    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#1a1a1a", t, 0.022, "700");
+    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", t, 0.030, "italic 600", "'Cormorant Garamond', Georgia, serif");
 
     for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
@@ -518,7 +518,7 @@ export default function LatentAnimation() {
       drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, 1, CFG.colors.burntOrange);
     }
     // Top title
-    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#1a1a1a", 1, 0.022, "700");
+    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", 1, 0.030, "italic 600", "'Cormorant Garamond', Georgia, serif");
     drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, 0.9, 0.022, "600");
     drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, 0.9, 0.022, "600");
     // Bottom text
