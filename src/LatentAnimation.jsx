@@ -325,8 +325,8 @@ export default function LatentAnimation() {
     drawGaussian(ctx, 0.12);
     // Title + headers
     drawText(ctx, "Phase 1: Tokenization", 0.5, 0.04, CFG.colors.steelBlue, 1, 0.03, "800");
-    drawText(ctx, "Input", L.leftX, 0.10, CFG.colors.steelBlue, 1, 0.02, "600");
-    drawText(ctx, "Reconstructed", L.rightX, 0.10, CFG.colors.steelBlue, 1, 0.02, "600");
+    drawText(ctx, "Input", L.leftX, 0.10, CFG.colors.steelBlue, 1, 0.024, "600");
+    drawText(ctx, "Reconstructed", L.rightX, 0.10, CFG.colors.steelBlue, 1, 0.024, "600");
 
     const arrowRads = [0.015, 0.0, -0.015];
 
@@ -383,9 +383,9 @@ export default function LatentAnimation() {
     const titleText = t < 0.5 ? "Phase 1: Tokenization" : "Phase 2: Generation";
     drawText(ctx, titleText, 0.5, 0.04, titleCol, 1, 0.03, "800");
     const hdrCol = lerpColor("#2c6faa", "#555555", t);
-    drawText(ctx, "Input", L.leftX, 0.10, hdrCol, 1, 0.02, "600");
+    drawText(ctx, "Input", L.leftX, 0.10, hdrCol, 1, 0.024, "600");
     const rightText = t < 0.5 ? "Reconstructed" : "Generated";
-    drawText(ctx, rightText, L.rightX, 0.10, hdrCol, 1, 0.02, "600");
+    drawText(ctx, rightText, L.rightX, 0.10, hdrCol, 1, 0.024, "600");
 
     const dim = 1 - t * 0.7;
     for (let i = 0; i < NUM_ROWS; i++) {
@@ -404,8 +404,8 @@ export default function LatentAnimation() {
     const L = CFG.layout;
     drawGaussian(ctx, 0.12);
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1, 0.03, "800");
-    drawText(ctx, "Input", L.leftX, 0.10, "#555", 1, 0.02, "600");
-    drawText(ctx, "Generated", L.rightX, 0.10, "#555", 1, 0.02, "600");
+    drawText(ctx, "Input", L.leftX, 0.10, "#555", 1, 0.024, "600");
+    drawText(ctx, "Generated", L.rightX, 0.10, "#555", 1, 0.024, "600");
 
     // Dimmed Phase 1
     for (let i = 0; i < NUM_ROWS; i++) {
@@ -493,8 +493,8 @@ export default function LatentAnimation() {
       drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, t, CFG.colors.burntOrange);
     }
     // Headers
-    drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, t * 0.9, 0.018, "600");
-    drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, t * 0.9, 0.018, "600");
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, t * 0.9, 0.022, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, t * 0.9, 0.022, "600");
     // Bottom text
     drawText(ctx, "Tokenization through one-step encoding and decoding", 0.5, 0.62, CFG.colors.steelBlue, t * 0.9, 0.018, "500");
     drawText(ctx, "Generation through iterative denoising + decoding", 0.5, 0.66, CFG.colors.burntOrange, t * 0.9, 0.018, "500");
@@ -519,8 +519,8 @@ export default function LatentAnimation() {
     }
     // Top title
     drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#1a1a1a", 1, 0.022, "700");
-    drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, 0.9, 0.018, "600");
-    drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, 0.9, 0.018, "600");
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, 0.9, 0.022, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, 0.9, 0.022, "600");
     // Bottom text
     drawText(ctx, "Tokenization through one-step encoding and decoding", 0.5, 0.62, CFG.colors.steelBlue, 0.9, 0.018, "500");
     drawText(ctx, "Generation through iterative denoising + decoding", 0.5, 0.66, CFG.colors.burntOrange, 0.9, 0.018, "500");
@@ -605,7 +605,7 @@ export default function LatentAnimation() {
       style={{
         position: "relative",
         width: "100%",
-        maxWidth: 700,
+        maxWidth: 820,
         aspectRatio: `1 / ${ASPECT}`,
         margin: "0 auto",
         background: "rgba(248,246,241,0.5)",
