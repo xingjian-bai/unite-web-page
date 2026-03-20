@@ -266,6 +266,9 @@ button {
   align-items: center;
   justify-content: center;
   width: 100%;
+  max-width: var(--page-width);
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 0;
   background: #ffffff;
   overflow: visible;
@@ -449,45 +452,48 @@ button {
 
 .loop-sequence {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  margin-top: 1rem;
-  max-width: 42rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.8rem;
+  max-width: var(--page-width);
   margin-left: auto;
   margin-right: auto;
 }
 
 .sequence-step {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.6rem;
-  align-items: start;
-  padding: 0.8rem 0;
-  border-top: 1px solid rgba(17, 34, 56, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.6rem 0.4rem;
+  border-top: 2px solid rgba(39, 79, 134, 0.12);
 }
 
 .sequence-step span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.4rem;
+  height: 1.4rem;
   border-radius: 999px;
   background: rgba(39, 79, 134, 0.08);
   color: var(--blue);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
 }
 
 .sequence-step h3 {
-  margin: 0;
-  font-size: 1rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.88rem;
   line-height: 1.3;
 }
 
 .sequence-step p {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-top: 0;
 }
 
 .detach-note {

@@ -26,18 +26,18 @@ const storyCards = [
 const loopSteps = [
   {
     number: "01",
-    title: "Tokenize",
-    body: "The Generative Encoder tokenizes the image into K clean latent tokens z₀.",
+    title: "Encode",
+    body: "The Generative Encoder maps the input image to clean latent tokens.",
   },
   {
     number: "02",
-    title: "Detach + noise",
-    body: "Detach z₀ from the graph, then add noise to get zₜ. Detach blocks the denoising gradient from taking shortcuts through tokenization.",
+    title: "Denoise",
+    body: "The latents are detached from the graph and noised. The same Generative Encoder then denoises them via flow matching, producing the diffusion loss.",
   },
   {
     number: "03",
-    title: "Denoise",
-    body: "The same encoder (no image this time) predicts z₀ from zₜ. Both losses update the shared weights via separate backward passes.",
+    title: "Decode",
+    body: "The decoder reconstructs the image from the clean latents, producing the reconstruction loss. Both losses jointly update the shared encoder.",
   },
 ];
 
@@ -334,7 +334,7 @@ function App() {
                 while starting from noise yields a broader distribution for sampling.
               </p>
             </div>
-            <div className="reveal" style={{ marginTop: "1.5rem" }}>
+            <div className="loop-panel-figure reveal">
               <LatentAnimation />
             </div>
           </div>
@@ -342,7 +342,7 @@ function App() {
           <div className="loop-panel" id="loop">
             <div className="loop-intro reveal">
               <p className="card-kicker">Training</p>
-              <h3>Two forward passes, one shared Generative Encoder</h3>
+              <h3>Two forward passes, one Generative Encoder</h3>
               <p className="loop-desc">
                 The Generative Encoder tokenizes an image into clean latent tokens, which the decoder maps back to pixels to compute a <strong>reconstruction loss</strong>.
                 The same latents are then detached and noised, and the <em>same</em> Generative Encoder denoises them to compute a <strong>flow-matching loss</strong>.
