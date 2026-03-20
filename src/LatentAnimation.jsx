@@ -175,7 +175,7 @@ export default function LatentAnimation() {
   const drawBox = useCallback((ctx, text, cx, cy, color, alpha) => {
     if (alpha < 0.01) return;
     const s = stateRef.current.size;
-    const bw = 0.036 * s, bh = 0.036 * s;
+    const bw = 0.044 * s, bh = 0.036 * s;
     const x = cx * s - bw / 2, y = cy * s - bh / 2;
     ctx.globalAlpha = alpha;
     ctx.fillStyle = "#fff";
@@ -345,7 +345,7 @@ export default function LatentAnimation() {
       // E + arrow
       if (re >= c.encDelay) {
         const a = fadeA(c.encDelay);
-        drawBox(ctx, "E", L.encoderX, y, CFG.colors.steelBlue, a);
+        drawBox(ctx, "GE", L.encoderX, y, CFG.colors.steelBlue, a);
         drawArrow(ctx, L.leftX + L.imgSize / 2 + 0.01, y, L.encoderX - L.boxHalf - 0.01, y, CFG.colors.steelBlue, a);
       }
       // Blue dot + arrow
@@ -392,7 +392,7 @@ export default function LatentAnimation() {
       const y = L.rowYs[i];
       drawImg(ctx, imgs.current.input[i], L.leftX, y, L.imgSize, dim, CFG.colors.steelBlue);
       drawImg(ctx, imgs.current.input[i], L.rightX, y, L.imgSize, dim * 0.3, CFG.colors.steelBlue);
-      drawBox(ctx, "E", L.encoderX, y, CFG.colors.steelBlue, dim * 0.3);
+      drawBox(ctx, "GE", L.encoderX, y, CFG.colors.steelBlue, dim * 0.3);
       drawBox(ctx, "D", L.decoderX, y, CFG.colors.steelBlue, dim * 0.3);
       drawDot(ctx, CFG.blueDots[i].x, CFG.blueDots[i].y, CFG.colors.steelBlue, 0.3 + 0.7 * (1 - t));
     }
