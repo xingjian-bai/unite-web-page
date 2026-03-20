@@ -416,8 +416,11 @@ button {
 
 .thesis-figure img,
 .loop-panel-figure img {
+  display: block;
   width: 100%;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .animation-panel {
@@ -824,7 +827,10 @@ button {
 
 .analysis-frame img,
 .figure-card img {
+  display: block;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .analysis-frame img {
