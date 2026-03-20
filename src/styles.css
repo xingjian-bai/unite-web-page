@@ -29,6 +29,7 @@ body {
   color: var(--ink);
   font-family: "Instrument Sans", sans-serif;
   background: #ffffff;
+  text-align: justify;
 }
 
 a {
