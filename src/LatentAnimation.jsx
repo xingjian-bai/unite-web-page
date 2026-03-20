@@ -202,13 +202,15 @@ export default function LatentAnimation() {
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = color;
     ctx.lineWidth = 2.5;
+
+    let cpx, cpy; // control point (used for curved and arrowhead)
     ctx.beginPath();
     if (curve) {
       const mx = (ax + bx) / 2, my = (ay + by) / 2;
       const dx = bx - ax, dy = by - ay;
-      const len = Math.sqrt(dx * dx + dy * dy);
-      const nx = -dy / len * curve * s, ny = dx / len * curve * s;
-      const cpx = mx + nx, cpy = my + ny;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      cpx = mx + (-dy / len) * curve * s;
+      cpy = my + (dx / len) * curve * s;
       ctx.moveTo(ax, ay);
       ctx.quadraticCurveTo(cpx, cpy, bx, by);
     } else {
@@ -216,25 +218,20 @@ export default function LatentAnimation() {
       ctx.lineTo(bx, by);
     }
     ctx.stroke();
-    // Arrowhead
-    const angle = Math.atan2(by - ay, bx - ax);
-    // For curved arrows, recalculate angle at endpoint
-    let endAngle = angle;
+
+    // Arrowhead — use tangent at endpoint for accurate direction
+    let endAngle;
     if (curve) {
-      const mx = (ax + bx) / 2, my = (ay + by) / 2;
-      const dx2 = bx - ax, dy2 = by - ay;
-      const len = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-      const nx = -dy2 / len * curve * s, ny = dx2 / len * curve * s;
-      const cpx = mx + nx, cpy = my + ny;
-      // Tangent at t=1: derivative of quadratic bezier
-      const tdx = 2 * (bx - cpx), tdy = 2 * (by - cpy);
-      endAngle = Math.atan2(tdy, tdx);
+      // Tangent at t=1 of quadratic bezier: P1→P2 direction
+      endAngle = Math.atan2(by - cpy, bx - cpx);
+    } else {
+      endAngle = Math.atan2(by - ay, bx - ax);
     }
-    const hs = 8;
+    const hs = 9;
     ctx.beginPath();
     ctx.moveTo(bx, by);
-    ctx.lineTo(bx - hs * Math.cos(endAngle - 0.4), by - hs * Math.sin(endAngle - 0.4));
-    ctx.lineTo(bx - hs * Math.cos(endAngle + 0.4), by - hs * Math.sin(endAngle + 0.4));
+    ctx.lineTo(bx - hs * Math.cos(endAngle - 0.35), by - hs * Math.sin(endAngle - 0.35));
+    ctx.lineTo(bx - hs * Math.cos(endAngle + 0.35), by - hs * Math.sin(endAngle + 0.35));
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
