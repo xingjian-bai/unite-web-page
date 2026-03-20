@@ -37,11 +37,11 @@ const CFG = {
     bg: "transparent",
   },
   // ── Stage timing (ms) — tune independently ──
-  phase1: { rowDelay: 1400, encDelay: 250, dotDelay: 550, lblDelay: 650, decDelay: 850, fadeIn: 450, freeze: 550, popDur: 500, popScale: 2.2 },
-  trans12: { duration: 750 },
-  phase2: { trajDelay: 2400, trajDur: 1800, decDelay: 180, fadeIn: 400, freeze: 700, popDur: 500, popScale: 2.2 },
-  trans23: { duration: 1100 },
-  phase3: { hold: 7000, breathMs: 3000 },
+  phase1: { rowDelay: 2100, encDelay: 375, dotDelay: 825, lblDelay: 975, decDelay: 1275, fadeIn: 675, freeze: 825, popDur: 750, popScale: 2.2 },
+  trans12: { duration: 1125 },
+  phase2: { trajDelay: 3600, trajDur: 2700, decDelay: 270, fadeIn: 600, freeze: 1050, popDur: 750, popScale: 2.2 },
+  trans23: { duration: 1650 },
+  phase3: { hold: 10500, breathMs: 4500 },
 };
 
 // Pre-compute trajectories
@@ -473,8 +473,9 @@ export default function LatentAnimation() {
     const L = CFG.layout;
     drawGaussian(ctx, 0.12 + t * 0.03);
 
-    // Fade title
+    // Fade out P2 title, fade in UNITE title
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1 - t, 0.03, "800");
+    drawText(ctx, "UNITE: A Shared Latent Language", 0.5, 0.06, "#1a1a1a", t, 0.028, "700");
 
     for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
@@ -490,13 +491,11 @@ export default function LatentAnimation() {
       drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, t, CFG.colors.burntOrange);
     }
     // Headers
-    drawText(ctx, "Reconstructed", P3_LEFT, 0.14, CFG.colors.steelBlue, t * 0.9, 0.018, "600");
-    drawText(ctx, "Generated", P3_RIGHT, 0.14, CFG.colors.burntOrange, t * 0.9, 0.018, "600");
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.16, CFG.colors.steelBlue, t * 0.9, 0.018, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.16, CFG.colors.burntOrange, t * 0.9, 0.018, "600");
     // Bottom text
-    drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", t, 0.026, "800");
-    drawText(ctx, "Tokenization produces z in one deterministic step", 0.5, 0.86, CFG.colors.steelBlue, t * 0.9, 0.016, "500");
-    drawText(ctx, "Generation recovers z through learned iterative denoising", 0.5, 0.895, CFG.colors.burntOrange, t * 0.9, 0.016, "500");
-    drawText(ctx, "UNITE: jointly optimized, from scratch, without external supervision", 0.5, 0.94, "#888", t * 0.8, 0.013, "400");
+    drawText(ctx, "Tokenization through one-step encoding and decoding", 0.5, 0.80, CFG.colors.steelBlue, t * 0.9, 0.018, "500");
+    drawText(ctx, "Generation through iterative denoising + decoding", 0.5, 0.845, CFG.colors.burntOrange, t * 0.9, 0.018, "500");
     return el >= dur;
   }, [drawGaussian, drawImg, drawDot, drawText, drawTraj]);
 
@@ -516,12 +515,13 @@ export default function LatentAnimation() {
       drawImg(ctx, imgs.current.input[i], P3_LEFT, y, P3_IMG, 0.9, CFG.colors.steelBlue);
       drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, 1, CFG.colors.burntOrange);
     }
-    drawText(ctx, "Reconstructed", P3_LEFT, 0.14, CFG.colors.steelBlue, 0.9, 0.018, "600");
-    drawText(ctx, "Generated", P3_RIGHT, 0.14, CFG.colors.burntOrange, 0.9, 0.018, "600");
-    drawText(ctx, "A Single Latent Space", 0.5, 0.82, "#1a1a1a", 1, 0.026, "800");
-    drawText(ctx, "Tokenization produces z in one deterministic step", 0.5, 0.86, CFG.colors.steelBlue, 0.9, 0.016, "500");
-    drawText(ctx, "Generation recovers z through learned iterative denoising", 0.5, 0.895, CFG.colors.burntOrange, 0.9, 0.016, "500");
-    drawText(ctx, "UNITE: jointly optimized, from scratch, without external supervision", 0.5, 0.94, "#888", 0.8, 0.013, "400");
+    // Top title
+    drawText(ctx, "UNITE: A Shared Latent Language", 0.5, 0.06, "#1a1a1a", 1, 0.028, "700");
+    drawText(ctx, "Reconstructed", P3_LEFT, 0.16, CFG.colors.steelBlue, 0.9, 0.018, "600");
+    drawText(ctx, "Generated", P3_RIGHT, 0.16, CFG.colors.burntOrange, 0.9, 0.018, "600");
+    // Bottom text
+    drawText(ctx, "Tokenization through one-step encoding and decoding", 0.5, 0.80, CFG.colors.steelBlue, 0.9, 0.018, "500");
+    drawText(ctx, "Generation through iterative denoising + decoding", 0.5, 0.845, CFG.colors.burntOrange, 0.9, 0.018, "500");
     return el >= c.hold;
   }, [drawGaussian, drawImg, drawDot, drawText, drawTraj]);
 

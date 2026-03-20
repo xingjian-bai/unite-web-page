@@ -91,14 +91,19 @@ const sampleMontages = [
 
 const analysisCards = [
   {
-    title: "Weight sharing gives the best rFID / gFID tradeoff",
-    body: "No-sharing performs well, but weight sharing yields the best combination. More flow iterations per tokenization step make the latents more sampleable (better gFID) without hurting rFID.",
+    title: "Weight sharing achieves the best rFID / gFID trade-off",
+    body: "Both UNITE (weight-shared) and a separate encoder–denoiser ablation attain competitive performance, with UNITE benefiting from more denoising-to-reconstruction steps during training.",
     image: "./assets/figures/stop_grad_ablations_sep_vs_ours.png",
   },
   {
     title: "Tokenization and denoising are intrinsically aligned",
-    body: "High layer-wise CKA between encoder and denoiser in both shared and non-shared settings — the two tasks naturally learn similar representations even without forcing them to share weights.",
-    image: "./assets/figures/cka_ablation_plot_v2.png",
+    body: "Both weight-shared and separate settings show strong layer-wise CKA alignment, especially in later layers. Removing the stop-gradient weakens late-layer alignment and leads to a less cleanly shared representation.",
+    image: "./assets/figures/cka_analysis_final_v2.png",
+  },
+  {
+    title: "Stop-gradient yields cleaner denoising trajectories",
+    body: "Stop-gradient variants exhibit markedly cleaner intermediate denoising at all noise levels, with higher PSNR to the input — consistent with the representation alignment analysis above.",
+    image: "./assets/figures/denoising_analysis.png",
   },
 ];
 
