@@ -648,7 +648,8 @@ export default function LatentAnimation() {
             style={{
               ...btnStyle,
               background: phaseLabel === btn.display
-                ? (btn.label === "Latent Gen" ? CFG.colors.burntOrange : "#2c6faa")
+                ? (btn.label === "Latent Gen" ? CFG.colors.burntOrange
+                  : btn.label === "Unified" ? "#2c3e50" : "#2c6faa")
                 : "rgba(55,53,47,0.08)",
               color: phaseLabel === btn.display ? "#fff" : "#555",
             }}
