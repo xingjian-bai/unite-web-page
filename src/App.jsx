@@ -27,7 +27,7 @@ const loopSteps = [
   {
     number: "01",
     title: "Encode",
-    body: "The Generative Encoder maps the input image to clean latent tokens.",
+    body: "The Generative Encoder maps the input image to clean latent tokens. To unify the input format across pathways, we represent the latent as a fixed set of 1-D register tokens.",
   },
   {
     number: "02",
@@ -49,18 +49,18 @@ const statCards = [
 ];
 
 const generationRows = [
-  { method: "JiT-B/16", regime: "single-stage", params: "131M", fid: "3.66", is: "275.1", section: "Single-stage" },
-  { method: "UNITE-B (Ours)", regime: "single-stage", params: "131M+86M", fid: "2.12", is: "294.1", ours: true },
-  { method: "JiT-L/16", regime: "single-stage", params: "459M", fid: "2.36", is: "298.5" },
-  { method: "UNITE-L (Ours)", regime: "single-stage", params: "461M+86M", fid: "1.73", is: "296.0", ours: true },
-  { method: "PixelFlow-XL/4", regime: "single-stage", params: "677M", fid: "1.98", is: "282.1" },
-  { method: "JiT-H/16", regime: "single-stage", params: "953M", fid: "1.86", is: "303.4" },
-  { method: "JiT-G/16", regime: "single-stage", params: "2B", fid: "1.82", is: "292.6" },
-  { method: "UNITE-XL (Ours)", regime: "single-stage", params: "678M+86M", fid: "1.75", is: "309.9", ours: true },
-  { method: "DiT-XL/2", regime: "two-stage", params: "675M+49M", fid: "2.27", is: "278.2", section: "Two-stage", dimmed: true },
-  { method: "SiT-XL/2", regime: "two-stage", params: "675M+49M", fid: "2.06", is: "277.5", dimmed: true },
-  { method: "REPA-SiT-XL/2", regime: "two-stage + DINOv2", params: "675M+49M", fid: "1.42", is: "305.7", section: "Two-stage + DINOv2", dimmed: true },
-  { method: "DDT-XL/2", regime: "two-stage + DINOv2", params: "675M+49M", fid: "1.26", is: "310.6", dimmed: true },
+  { method: "JiT-B/16", pipeline: "single-stage", params: "131M", fid: "3.66", is: "275.1", section: "Single-stage" },
+  { method: "UNITE-B (Ours)", pipeline: "single-stage", params: "131M+86M", fid: "2.12", is: "294.1", ours: true },
+  { method: "JiT-L/16", pipeline: "single-stage", params: "459M", fid: "2.36", is: "298.5" },
+  { method: "UNITE-L (Ours)", pipeline: "single-stage", params: "461M+86M", fid: "1.73", is: "296.0", ours: true },
+  { method: "PixelFlow-XL/4", pipeline: "single-stage", params: "677M", fid: "1.98", is: "282.1" },
+  { method: "JiT-H/16", pipeline: "single-stage", params: "953M", fid: "1.86", is: "303.4" },
+  { method: "JiT-G/16", pipeline: "single-stage", params: "2B", fid: "1.82", is: "292.6" },
+  { method: "UNITE-XL (Ours)", pipeline: "single-stage", params: "678M+86M", fid: "1.75", is: "309.9", ours: true },
+  { method: "DiT-XL/2", pipeline: "two-stage", params: "675M+49M", fid: "2.27", is: "278.2", section: "Two-stage", dimmed: true },
+  { method: "SiT-XL/2", pipeline: "two-stage", params: "675M+49M", fid: "2.06", is: "277.5", dimmed: true },
+  { method: "REPA-SiT-XL/2", pipeline: "two-stage + DINOv2", params: "675M+49M", fid: "1.42", is: "305.7", section: "Two-stage + DINOv2", dimmed: true },
+  { method: "DDT-XL/2", pipeline: "two-stage + DINOv2", params: "675M+49M", fid: "1.26", is: "310.6", dimmed: true },
 ];
 
 const reconstructionRows = [
@@ -133,7 +133,7 @@ function GenerationTable() {
           <div className="table-head">
             <span>Method</span>
             <span>Params</span>
-            <span>Regime</span>
+            <span>Pipeline</span>
             <span>FID ↓</span>
             <span>IS ↑</span>
           </div>
@@ -151,8 +151,8 @@ function GenerationTable() {
                 <span className="cell" data-label="Params">
                   {row.params}
                 </span>
-                <span className="cell" data-label="Regime">
-                  {row.regime}
+                <span className="cell" data-label="Pipeline">
+                  {row.pipeline}
                 </span>
                 <strong className="cell cell-strong" data-label="FID ↓">
                   {row.fid}
@@ -302,7 +302,7 @@ function App() {
             </div>
 
             <div className="hero-figure">
-              <img src="./assets/figures/teaser2.png" alt="UNITE teaser figure" loading="lazy" />
+              <LatentAnimation />
             </div>
 
           </div>
@@ -324,7 +324,7 @@ function App() {
           <div className="thesis-panel" id="idea">
             <div className="thesis-copy reveal">
               <p className="card-kicker">Core idea</p>
-              <h3>Tokenization is generation with strong observability.</h3>
+              <h3>Tokenization is generation with strong observability</h3>
               <p>
                 Tokenization infers latents from a fully observed image;
                 generation infers them from noise. Same inference problem, different conditioning.
@@ -333,9 +333,6 @@ function App() {
                 support both — conditioning on an image yields a near-deterministic latent,
                 while starting from noise yields a broader distribution for sampling.
               </p>
-            </div>
-            <div className="loop-panel-figure reveal">
-              <LatentAnimation />
             </div>
           </div>
 
@@ -375,14 +372,17 @@ function App() {
           <div className="animation-panel reveal" id="animation">
             <div className="loop-intro">
               <p className="card-kicker">Inference</p>
-              <h3>Reconstruction and generation from one model</h3>
+              <h3>Tokenization and generation using the same model</h3>
               <p className="loop-desc">
-                For tokenization, the Generative Encoder maps an image to latents in a single forward pass; the decoder reconstructs pixels.
-                For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the same encoder.
+                For tokenization, the Generative Encoder maps an image to latents in a single forward pass.
+                For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the Generative Encoder.
               </p>
             </div>
-            <div className="loop-panel-figure">
+            {/* <div className="loop-panel-figure">
               <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
+            </div> */}
+            <div className="loop-panel-figure">
+              <img src="./assets/figures/teaser2.png" alt="Tokenization and generation using the same model" loading="lazy" />
             </div>
           </div>
         </section>
