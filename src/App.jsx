@@ -88,18 +88,18 @@ const gridSamples = [
 
 const analysisCards = [
   {
+    title: "Tokenization and denoising are intrinsically aligned",
+    body: "Both the weight-shared Generative Encoder and a separate encoder–denoiser variant exhibit high layer-wise alignment (CKNNA/CKA), especially in later layers. Architectural choices — per-block normalization, matched conditioning interfaces, and conservative optimization — further strengthen this alignment. When the two tasks already align, weight sharing becomes a principled way to remove redundancy.",
+    image: "./assets/figures/cka_cknna_ablation.png",
+  },
+  {
     title: "Weight sharing achieves the best rFID / gFID trade-off",
-    body: "Both UNITE (weight-shared) and a separate encoder–denoiser ablation attain competitive performance, with UNITE benefiting from more denoising-to-reconstruction steps during training.",
+    body: "Under weight sharing, increasing the number of flow iterations consistently improves generation fidelity while maintaining reconstruction quality. Weight sharing itself acts as a natural coupling mechanism between the two tasks, reducing the need for loss-weight tuning.",
     image: "./assets/figures/stop_grad_ablations_sep_vs_ours.png",
   },
   {
-    title: "Tokenization and denoising are intrinsically aligned",
-    body: "Both weight-shared and separate settings show strong layer-wise CKA alignment, especially in later layers. Removing the stop-gradient weakens late-layer alignment and leads to a less cleanly shared representation.",
-    image: "./assets/figures/cka_analysis_final_v2.png",
-  },
-  {
     title: "Stop-gradient yields cleaner denoising trajectories",
-    body: "Stop-gradient variants exhibit markedly cleaner intermediate denoising at all noise levels, with higher PSNR to the input — consistent with the representation alignment analysis above.",
+    body: "Stopping denoising gradients through the clean latent preserves a more cleanly shared representation between tokenization and generation. The stop-gradient variants produce markedly cleaner intermediate denoised reconstructions with higher PSNR across all noise levels.",
     image: "./assets/figures/denoising_analysis.png",
   },
 ];
@@ -284,9 +284,15 @@ function App() {
             <div className="hero-copy">
               <h1>UNITE: End-to-End Training for Unified Tokenization and Latent Denoising</h1>
               <p className="hero-authors">
-                Shivam Duggal*<sup>1</sup>, Xingjian Bai*<sup>1</sup>, Zongze Wu<sup>2</sup>, Richard Zhang<sup>2</sup>, Eli Shechtman<sup>2</sup>,
+                <a href="https://shivamduggal4.github.io/" target="_blank" rel="noopener noreferrer">Shivam Duggal*</a><sup>1</sup>,{" "}
+                <a href="https://xingjianbai.com/" target="_blank" rel="noopener noreferrer">Xingjian Bai*</a><sup>1</sup>,{" "}
+                <a href="https://betterze.github.io/website/" target="_blank" rel="noopener noreferrer">Zongze Wu</a><sup>2</sup>,{" "}
+                <a href="https://richzhang.github.io/" target="_blank" rel="noopener noreferrer">Richard Zhang</a><sup>2</sup>,{" "}
+                <a href="https://scholar.google.com/citations?user=B_FTboQAAAAJ" target="_blank" rel="noopener noreferrer">Eli Shechtman</a><sup>2</sup>,
                 <br />
-                Antonio Torralba<sup>1</sup>, Phillip Isola<sup>1</sup>, William T. Freeman<sup>1</sup>
+                <a href="https://groups.csail.mit.edu/vision/torralbalab/" target="_blank" rel="noopener noreferrer">Antonio Torralba</a><sup>1</sup>,{" "}
+                <a href="https://web.mit.edu/phillipi/" target="_blank" rel="noopener noreferrer">Phillip Isola</a><sup>1</sup>,{" "}
+                <a href="https://billf.mit.edu/" target="_blank" rel="noopener noreferrer">William T. Freeman</a><sup>1</sup>
               </p>
               <p className="hero-meta">
                 <sup>1</sup>Massachusetts Institute of Technology &nbsp; <sup>2</sup>Adobe
@@ -302,7 +308,7 @@ function App() {
             </div>
 
             <div className="hero-figure">
-              <LatentAnimation />
+              <img src="./assets/figures/teaser2.png" alt="UNITE teaser figure" loading="lazy" />
             </div>
 
           </div>
@@ -333,6 +339,9 @@ function App() {
                 support both — conditioning on an image yields a near-deterministic latent,
                 while starting from noise yields a broader distribution for sampling.
               </p>
+            </div>
+            <div className="loop-panel-figure reveal">
+              <LatentAnimation />
             </div>
           </div>
 
@@ -378,11 +387,8 @@ function App() {
                 For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the Generative Encoder.
               </p>
             </div>
-            {/* <div className="loop-panel-figure">
-              <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
-            </div> */}
             <div className="loop-panel-figure">
-              <img src="./assets/figures/teaser2.png" alt="Tokenization and generation using the same model" loading="lazy" />
+              <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
             </div>
           </div>
         </section>

@@ -207,6 +207,18 @@ button {
   line-height: 1.55;
 }
 
+.hero-authors a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.hero-authors a:hover {
+  border-bottom-color: var(--blue);
+  color: var(--blue);
+}
+
 .hero-meta {
   color: var(--muted);
 }
