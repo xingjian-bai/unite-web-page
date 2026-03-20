@@ -477,7 +477,7 @@ export default function LatentAnimation() {
 
     // Fade out P2 title, fade in UNITE title
     drawText(ctx, "Phase 2: Generation", 0.5, 0.04, CFG.colors.burntOrange, 1 - t, 0.03, "800");
-    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", t, 0.030, "italic 600", "'Cormorant Garamond', Georgia, serif");
+    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", t, 0.040, "italic 600", "'Cormorant Garamond', Georgia, serif");
 
     for (let i = 0; i < NUM_ROWS; i++) {
       const y = L.rowYs[i];
@@ -496,7 +496,7 @@ export default function LatentAnimation() {
     drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, t * 0.9, 0.022, "600");
     drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, t * 0.9, 0.022, "600");
     // Bottom text
-    drawText(ctx, "Tokenization through one-step encoding", 0.5, 0.54, CFG.colors.steelBlue, t * 0.9, 0.026, "600");
+    drawText(ctx, "Tokenization through one-step encoding", 0.5, 0.57, CFG.colors.steelBlue, t * 0.9, 0.026, "600");
     drawText(ctx, "Generation through iterative denoising", 0.5, 0.60, CFG.colors.burntOrange, t * 0.9, 0.026, "600");
     return el >= dur;
   }, [drawGaussian, drawImg, drawDot, drawText, drawTraj]);
@@ -518,11 +518,11 @@ export default function LatentAnimation() {
       drawImg(ctx, imgs.current.gen[i], P3_RIGHT, y, P3_IMG, 1, CFG.colors.burntOrange);
     }
     // Top title
-    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", 1, 0.030, "italic 600", "'Cormorant Garamond', Georgia, serif");
+    drawText(ctx, "A Shared Latent Language for Tokenization and Generation", 0.5, 0.06, "#2c3e50", 1, 0.040, "italic 600", "'Cormorant Garamond', Georgia, serif");
     drawText(ctx, "Reconstructed", P3_LEFT, 0.12, CFG.colors.steelBlue, 0.9, 0.022, "600");
     drawText(ctx, "Generated", P3_RIGHT, 0.12, CFG.colors.burntOrange, 0.9, 0.022, "600");
     // Bottom text
-    drawText(ctx, "Tokenization through one-step encoding", 0.5, 0.54, CFG.colors.steelBlue, 0.9, 0.026, "600");
+    drawText(ctx, "Tokenization through one-step encoding", 0.5, 0.57, CFG.colors.steelBlue, 0.9, 0.026, "600");
     drawText(ctx, "Generation through iterative denoising", 0.5, 0.60, CFG.colors.burntOrange, 0.9, 0.026, "600");
     return el >= c.hold;
   }, [drawGaussian, drawImg, drawDot, drawText, drawTraj]);
