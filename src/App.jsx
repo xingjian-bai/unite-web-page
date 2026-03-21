@@ -296,6 +296,16 @@ function App() {
                   GitHub
                 </a>
               </div>
+              <div className="hero-abstract">
+                <p>
+                  Training state-of-the-art latent diffusion models requires complex staging:
+                  a tokenizer must first be trained before a diffusion model can operate in its frozen latent space.
+                  We propose <strong>UNITE</strong> — an architecture for <em>unified tokenization and latent diffusion</em>.
+                  A single <strong>Generative Encoder</strong> serves as both image tokenizer and latent generator
+                  via weight sharing, trained in a single stage that jointly optimizes both tasks.
+                  UNITE learns a <em>common latent language</em> for tokenization and generation.
+                </p>
+              </div>
             </div>
 
             <div className="hero-figure">
@@ -316,17 +326,6 @@ function App() {
         </section>
 
         <section className="section opening-section" id="story">
-          <div className="abstract-block reveal">
-            <h2 className="abstract-heading">Abstract</h2>
-            <p className="abstract-text">
-              Training state-of-the-art latent diffusion models requires complex staging:
-              a tokenizer must first be trained before a diffusion model can operate in its frozen latent space.
-              We propose <strong>UNITE</strong> — an architecture for <em>unified tokenization and latent diffusion</em>.
-              A single <strong>Generative Encoder</strong> serves as both image tokenizer and latent generator
-              via weight sharing, trained in a single stage that jointly optimizes both tasks.
-              UNITE learns a <em>common latent language</em> for tokenization and generation.
-            </p>
-          </div>
 
           <div className="thesis-panel" id="idea">
             <div className="thesis-copy reveal">

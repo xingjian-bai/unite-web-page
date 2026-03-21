@@ -332,6 +332,21 @@ button {
   font-style: italic;
 }
 
+.hero-abstract {
+  margin-top: 1.2rem;
+  max-width: 38rem;
+}
+.hero-abstract p {
+  font-size: 0.92rem;
+  line-height: 1.72;
+  color: var(--muted);
+  text-align: justify;
+}
+.hero-abstract strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+
 .section-heading {
   max-width: var(--page-width);
   margin-left: auto;
