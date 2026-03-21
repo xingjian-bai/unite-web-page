@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 
 /*
- * TrainingComparison — animated canvas comparing two-stage LDM training vs UNITE joint training.
+ * TrainingComparison — animated canvas comparing two-stage LDM vs UNITE joint training.
  *
- * Three modes:
- *   Stage 1  "Tokenizer Training"   — blue z₀ dots converge to clusters (encoder/decoder only)
- *   Stage 2  "Denoiser Training"    — orange trajectories bend toward frozen z₀ (generator only)
- *   UNITE    "Joint Training"       — both move simultaneously (weight-shared Generative Encoder)
+ *   Stage 1  "Tokenizer Training"   — blue z₀ dots converge; recon loss displayed
+ *   Stage 2  "Denoiser Training"    — orange trajectories from Gaussian bend toward frozen z₀; flow loss displayed
+ *   UNITE    "Joint Training"       — both move simultaneously; both losses displayed
  */
 
 const CW = 720, CH = 460;
@@ -16,7 +15,7 @@ const CLUSTERS = [
   { x: 488, y: 375 }, { x: 228, y: 368 }, { x: 342, y: 228 },
 ];
 const PPC = 7, N_TRAJ = 160;
-const S1_FRAMES = 480, S2_FRAMES = 420, S3_FRAMES = 600;
+const S1_FRAMES = 480, S3_FRAMES = 600;
 
 const rnd = (a, b) => a + Math.random() * (b - a);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -25,10 +24,10 @@ const easeO3 = t => 1 - Math.pow(1 - t, 3);
 const easeIO = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 function randn() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-12)) * Math.cos(2 * Math.PI * Math.random()); }
 
-const C_BLUE = [96, 165, 250];
-const C_ORANGE = [255, 120, 40];
-const C_PURP = [170, 90, 230];
-const C_GOLD = [251, 191, 36];
+const C_BLUE = [59, 130, 246];
+const C_ORANGE = [234, 88, 12];
+const C_PURP = [140, 70, 210];
+const C_GOLD = [180, 120, 10];
 
 function ztRGB(t) {
   return [
@@ -40,23 +39,20 @@ function ztRGB(t) {
 
 export default function TrainingComparison() {
   const canvasRef = useRef(null);
-  const stateRef = useRef({
-    pts: [], trajs: [], gaussDots: [],
-    frame: 0, stage: 1,
-  });
+  const stateRef = useRef({ pts: [], trajs: [], gaussDots: [], frame: 0, stage: 1 });
   const [stage, setStage] = useState(1);
 
   // ── helpers ──
   function glowDot(cx, x, y, r, [cr, cg, cb], gs, alpha = 1) {
     const g = cx.createRadialGradient(x, y, 0, x, y, gs);
-    g.addColorStop(0, `rgba(${cr},${cg},${cb},${0.55 * alpha})`);
-    g.addColorStop(0.4, `rgba(${cr},${cg},${cb},${0.20 * alpha})`);
+    g.addColorStop(0, `rgba(${cr},${cg},${cb},${0.45 * alpha})`);
+    g.addColorStop(0.4, `rgba(${cr},${cg},${cb},${0.15 * alpha})`);
     g.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
     cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, gs, 0, Math.PI * 2); cx.fill();
     cx.globalAlpha = alpha;
     cx.fillStyle = `rgb(${cr},${cg},${cb})`;
     cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2); cx.fill();
-    if (r > 2) { cx.fillStyle = `rgba(255,255,255,.6)`; cx.beginPath(); cx.arc(x, y, r * 0.38, 0, Math.PI * 2); cx.fill(); }
+    if (r > 2) { cx.fillStyle = `rgba(255,255,255,.55)`; cx.beginPath(); cx.arc(x, y, r * 0.35, 0, Math.PI * 2); cx.fill(); }
     cx.globalAlpha = 1;
   }
 
@@ -104,6 +100,17 @@ export default function TrainingComparison() {
     return wsum > 1e-12 ? [wx / wsum, wy / wsum] : [pts[0].x, pts[0].y];
   }
 
+  // ── rounded-rect helper ──
+  function roundRect(cx, x, y, w, h, r) {
+    cx.beginPath();
+    cx.moveTo(x + r, y);
+    cx.lineTo(x + w - r, y); cx.arcTo(x + w, y, x + w, y + r, r);
+    cx.lineTo(x + w, y + h - r); cx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    cx.lineTo(x + r, y + h); cx.arcTo(x, y + h, x, y + h - r, r);
+    cx.lineTo(x, y + r); cx.arcTo(x, y, x + r, y, r);
+    cx.closePath();
+  }
+
   // ── init ──
   const initPts = useCallback(() => {
     const s = stateRef.current;
@@ -121,7 +128,7 @@ export default function TrainingComparison() {
     for (let i = 0; i < 240; i++) {
       const x = GCX + randn() * SIG_X, y = GCY + randn() * SIG_Y;
       if (x > 12 && x < CW - 12 && y > 12 && y < CH - 12)
-        s.gaussDots.push({ x, y, a: rnd(0.15, 0.55), r: rnd(1.2, 2.5), ph: rnd(0, Math.PI * 2) });
+        s.gaussDots.push({ x, y, a: rnd(0.12, 0.45), r: rnd(1.2, 2.5), ph: rnd(0, Math.PI * 2) });
     }
   }, []);
 
@@ -179,7 +186,7 @@ export default function TrainingComparison() {
       if (!cv) return;
       const cx = cv.getContext("2d");
 
-      // update
+      // ── update ──
       s.frame++;
       if (s.stage === 1) {
         const t = easeIO(clamp(s.frame / S1_FRAMES, 0, 1));
@@ -193,41 +200,38 @@ export default function TrainingComparison() {
       } else {
         const t = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, t); p.x = pos.x; p.y = pos.y; });
-        const anneal = t;
-        const sigma = lerp(220, 30, anneal);
+        const sigma = lerp(220, 30, t);
         s.trajs.forEach(tr => {
           const [tx, ty] = rbfTarget(s.pts, tr.sx, tr.sy, sigma);
-          const spd = tr.lerpSpd * anneal * 4;
+          const spd = tr.lerpSpd * t * 4;
           tr.ex = lerp(tr.ex, tx, spd);
           tr.ey = lerp(tr.ey, ty, spd);
         });
       }
 
-      // draw
+      // ── draw background ──
       cx.fillStyle = "#f8f9fb"; cx.fillRect(0, 0, CW, CH);
-      cx.strokeStyle = "#e4e8ee"; cx.lineWidth = 1;
+      cx.strokeStyle = "#e8ecf1"; cx.lineWidth = 1;
       for (let x = 0; x < CW; x += 50) { cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, CH); cx.stroke(); }
       for (let y = 0; y < CH; y += 50) { cx.beginPath(); cx.moveTo(0, y); cx.lineTo(CW, y); cx.stroke(); }
 
-      // gaussian cloud
+      // ── Gaussian cloud (Stage 2 & 3) ──
       if (s.stage >= 2) {
         const fi = clamp(s.frame / 60, 0, 1);
         const bg = cx.createRadialGradient(GCX, GCY, 0, GCX, GCY, 260);
-        bg.addColorStop(0, `rgba(140,70,210,${0.08 * fi})`);
-        bg.addColorStop(0.6, `rgba(140,70,210,${0.04 * fi})`);
+        bg.addColorStop(0, `rgba(140,70,210,${0.06 * fi})`);
+        bg.addColorStop(0.6, `rgba(140,70,210,${0.03 * fi})`);
         bg.addColorStop(1, `rgba(140,70,210,0)`);
         cx.fillStyle = bg; cx.fillRect(0, 0, CW, CH);
-        [[3, 0.06], [2, 0.11], [1, 0.22]].forEach(([sig, a]) => {
-          cx.strokeStyle = `rgba(170,90,230,${a * fi})`; cx.lineWidth = 1; cx.setLineDash([4, 5]);
+        [[2, 0.10], [1, 0.18]].forEach(([sig, a]) => {
+          cx.strokeStyle = `rgba(140,70,210,${a * fi})`; cx.lineWidth = 1; cx.setLineDash([4, 5]);
           cx.beginPath(); cx.ellipse(GCX, GCY, SIG_X * sig, SIG_Y * sig, 0, 0, Math.PI * 2); cx.stroke();
           cx.setLineDash([]);
         });
         if (fi > 0.6) {
-          cx.fillStyle = `rgba(170,90,230,${0.4 * fi})`; cx.font = "9px monospace";
-          cx.fillText("1\u03C3", GCX + SIG_X + 4, GCY + 4); cx.fillText("2\u03C3", GCX + SIG_X * 2 + 4, GCY + 4);
+          cx.fillStyle = `rgba(140,70,210,${0.35 * fi})`; cx.font = "9px monospace";
+          cx.fillText("\u03C3", GCX + SIG_X + 4, GCY + 4); cx.fillText("2\u03C3", GCX + SIG_X * 2 + 4, GCY + 4);
         }
-        cx.fillStyle = `rgba(140,70,210,${0.30 * fi})`; cx.font = "bold 20px serif";
-        cx.fillText("\uD835\uDCA9(0, I)", CW - 92, CH - 14);
         s.gaussDots.forEach(d => {
           const b = 0.6 + 0.4 * Math.sin(s.frame * 0.018 + d.ph);
           cx.globalAlpha = d.a * fi * b;
@@ -237,21 +241,21 @@ export default function TrainingComparison() {
         cx.globalAlpha = 1;
       }
 
-      // cluster glows
+      // ── cluster glows ──
       const p1 = s.stage === 1 ? easeIO(clamp(s.frame / S1_FRAMES, 0, 1))
         : s.stage === 3 ? easeIO(clamp(s.frame / S3_FRAMES, 0, 1)) : 1;
       if (p1 >= 0.12) {
         const a = (p1 - 0.12) / 0.88;
-        const col = s.stage === 3 ? [230, 170, 30] : [59, 130, 246];
+        const col = s.stage === 3 ? [180, 130, 20] : [59, 130, 246];
         CLUSTERS.forEach(c => {
           const g = cx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 50);
-          g.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${a * 0.15})`);
+          g.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${a * 0.10})`);
           g.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`);
           cx.fillStyle = g; cx.beginPath(); cx.arc(c.x, c.y, 50, 0, Math.PI * 2); cx.fill();
         });
       }
 
-      // trajectories
+      // ── trajectories ──
       if (s.stage >= 2) {
         const fi = clamp(s.frame / 50, 0, 1);
         const SEG = 24;
@@ -260,81 +264,62 @@ export default function TrainingComparison() {
           const { cp1x, cp1y, cp2x, cp2y } = getCP(sx, sy, ex, ey, off1, off2);
           for (let i = 0; i < SEG - 1; i++) {
             const t1 = i / (SEG - 1), t2 = (i + 1) / (SEG - 1);
-            const p1 = cbez(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey, t1);
-            const p2 = cbez(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey, t2);
+            const pp1 = cbez(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey, t1);
+            const pp2 = cbez(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey, t2);
             const [cr, cg, cb] = ztRGB(t2);
-            cx.strokeStyle = `rgba(${cr},${cg},${cb},${(0.10 + t2 * 0.55) * fi})`;
+            cx.strokeStyle = `rgba(${cr},${cg},${cb},${(0.08 + t2 * 0.45) * fi})`;
             cx.lineWidth = 1.5;
-            cx.beginPath(); cx.moveTo(p1.x, p1.y); cx.lineTo(p2.x, p2.y); cx.stroke();
+            cx.beginPath(); cx.moveTo(pp1.x, pp1.y); cx.lineTo(pp2.x, pp2.y); cx.stroke();
           }
-          glowDot(cx, sx, sy, 2.2, C_ORANGE, 7, 0.55 * fi);
+          // origin dot (Gaussian-sampled)
+          glowDot(cx, sx, sy, 2.0, C_ORANGE, 6, 0.45 * fi);
+          // endpoint dot — colour shifts toward blue as it nears target
           const tgt = s.stage === 3 ? s.pts[nearestPt(s.pts, ex, ey)] : s.pts[tr.targetIdx];
           const d = Math.hypot(ex - tgt.x, ey - tgt.y);
           const near = clamp(1 - d / 90, 0, 1);
-          glowDot(cx, ex, ey, 2.8, ztRGB(near), 9, 0.70 * fi);
+          glowDot(cx, ex, ey, 2.6, ztRGB(near), 8, 0.60 * fi);
         });
       }
 
-      // blue dots
+      // ── blue dots (image embeddings) ──
       const pulse = s.stage === 2 ? 0.78 + 0.22 * Math.sin(s.frame * 0.065) : 1;
       s.pts.forEach(pt => {
         const settled = easeO3(clamp(p1 * 1.5, 0, 1));
         const alpha = (0.40 + settled * 0.60) * pulse;
         if (s.stage === 3) {
-          const g = cx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 18);
-          g.addColorStop(0, `rgba(${C_GOLD[0]},${C_GOLD[1]},${C_GOLD[2]},.10)`);
+          const g = cx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 16);
+          g.addColorStop(0, `rgba(${C_GOLD[0]},${C_GOLD[1]},${C_GOLD[2]},.08)`);
           g.addColorStop(1, `rgba(${C_GOLD[0]},${C_GOLD[1]},${C_GOLD[2]},0)`);
-          cx.fillStyle = g; cx.beginPath(); cx.arc(pt.x, pt.y, 18, 0, Math.PI * 2); cx.fill();
+          cx.fillStyle = g; cx.beginPath(); cx.arc(pt.x, pt.y, 16, 0, Math.PI * 2); cx.fill();
         }
-        glowDot(cx, pt.x, pt.y, 3.5 + settled, C_BLUE, 10 + settled * 12, alpha);
+        glowDot(cx, pt.x, pt.y, 3.5 + settled, C_BLUE, 10 + settled * 10, alpha);
       });
 
-      // HUD
+      // ── HUD: title ──
+      const titleColor = s.stage === 3 ? "rgba(160,100,5,.7)" : "#8899aa";
+      const titleText = s.stage === 1 ? "Latent Space" : s.stage === 2 ? "Latent Space" : "UNITE \u2014 Joint Training";
+      cx.fillStyle = titleColor; cx.font = "bold 11px monospace"; cx.fillText(titleText, 12, 16);
+
+      // ── HUD: loss panel (bottom-left) ──
       if (s.stage === 1) {
-        cx.fillStyle = "#8899aa"; cx.font = "11px monospace"; cx.fillText("Latent Space", 12, 16);
         const lp = easeIO(clamp(s.frame / S1_FRAMES, 0, 1));
         const loss = 2.8 * (1 - easeIO(lp)) + 0.06;
-        cx.fillStyle = "rgba(255,255,255,0.85)"; cx.fillRect(12, CH - 54, 178, 42);
-        cx.strokeStyle = "#d0d8e0"; cx.lineWidth = 1; cx.strokeRect(12, CH - 54, 178, 42);
-        cx.fillStyle = "#6b7b8d"; cx.font = "10px monospace"; cx.fillText("Reconstruction Loss", 20, CH - 38);
-        cx.fillStyle = "#4ade80"; cx.font = "bold 14px monospace"; cx.fillText(loss.toFixed(4), 20, CH - 20);
-        cx.fillStyle = "#e2e8f0"; cx.fillRect(20, CH - 12, 160, 3);
-        cx.fillStyle = `rgba(96,165,250,${0.4 + lp * 0.6})`; cx.fillRect(20, CH - 12, 160 * Math.max(0, lp), 3);
-        const msgs = ["tokenizing batch\u2026", "z\u2080 \u2190 GE(x)", "update GE, D", "backprop\u2026"];
-        const fi = Math.floor(s.frame / 60) % msgs.length;
-        const fa = Math.sin((s.frame % 60) / 60 * Math.PI) * 0.5;
-        cx.globalAlpha = fa; cx.fillStyle = "#60a5fa"; cx.font = "11px monospace";
-        cx.fillText(msgs[fi], CW / 2 - 38, 16); cx.globalAlpha = 1;
+        drawLossPanel(cx, 12, CH - 52, 170, 40, "\u2112\u2091\u2091\u1d58\u2099 (recon)", loss, [59, 130, 246], lp);
       } else if (s.stage === 2) {
-        cx.fillStyle = "#8899aa"; cx.font = "11px monospace"; cx.fillText("Latent Space", 12, 16);
-        cx.fillStyle = "rgba(255,255,255,0.85)"; cx.fillRect(12, CH - 62, 200, 50);
-        cx.strokeStyle = "#d0d8e0"; cx.lineWidth = 1; cx.strokeRect(12, CH - 62, 200, 50);
-        glowDot(cx, 28, CH - 44, 4, C_BLUE, 10, 0.9);
-        cx.fillStyle = "#556677"; cx.font = "10px monospace"; cx.fillText("z\u2080  frozen (tokenizer)", 40, CH - 40);
-        glowDot(cx, 28, CH - 22, 3, C_ORANGE, 8, 0.9);
-        cx.fillText("denoising trajectory \u2192 z\u2080", 40, CH - 18);
+        const lp = clamp(s.frame / 600, 0, 1);
+        const loss = 2.4 * (1 - easeIO(lp)) + 0.08;
+        drawLossPanel(cx, 12, CH - 52, 170, 40, "\u2112flow (denoise)", loss, [140, 70, 210], lp);
       } else {
         const lp = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
-        cx.fillStyle = "rgba(180,83,9,.6)"; cx.font = "11px monospace";
-        cx.fillText("UNITE \u2014 Joint Training", 12, 16);
-        const lossE = 2.8 * (1 - easeIO(lp)) + 0.06;
-        const lossG = 2.2 * (1 - easeIO(lp * 0.9)) + 0.08;
-        cx.fillStyle = "rgba(255,255,255,0.85)"; cx.fillRect(12, CH - 68, 205, 56);
-        cx.strokeStyle = "rgba(202,138,4,.25)"; cx.lineWidth = 1; cx.strokeRect(12, CH - 68, 205, 56);
-        cx.fillStyle = "#6b7b8d"; cx.font = "10px monospace";
-        cx.fillText("Recon Loss", 20, CH - 52); cx.fillText("Flow Loss", 120, CH - 52);
-        cx.fillStyle = "#4ade80"; cx.font = "bold 13px monospace";
-        cx.fillText(lossE.toFixed(4), 20, CH - 36); cx.fillText(lossG.toFixed(4), 120, CH - 36);
-        cx.fillStyle = "#e2e8f0"; cx.fillRect(20, CH - 24, 175, 3);
-        cx.fillStyle = `rgba(202,138,4,${0.45 + lp * 0.55})`; cx.fillRect(20, CH - 24, 175 * Math.max(0, lp), 3);
-        cx.fillStyle = "rgba(255,255,255,0.85)"; cx.fillRect(CW - 218, CH - 62, 206, 50);
-        cx.strokeStyle = "rgba(202,138,4,.2)"; cx.lineWidth = 1; cx.strokeRect(CW - 218, CH - 62, 206, 50);
-        glowDot(cx, CW - 201, CH - 44, 4, C_BLUE, 12, 0.9);
-        cx.fillStyle = "#556677"; cx.font = "10px monospace";
-        cx.fillText("z\u2080  moving (GE training)", CW - 188, CH - 40);
-        glowDot(cx, CW - 201, CH - 22, 3, C_ORANGE, 8, 0.9);
-        cx.fillText("denoising \u2192 nearest z\u2080", CW - 188, CH - 18);
+        const lossR = 2.8 * (1 - easeIO(lp)) + 0.06;
+        const lossF = 2.2 * (1 - easeIO(lp * 0.9)) + 0.08;
+        // two loss panels side by side
+        drawLossPanel(cx, 12, CH - 52, 140, 40, "Recon Loss", lossR, [59, 130, 246], lp);
+        drawLossPanel(cx, 160, CH - 52, 140, 40, "Flow Loss", lossF, [140, 70, 210], lp);
       }
+
+      // ── HUD: legend (bottom-right) ──
+      drawLegend(cx, s.stage);
 
       raf = requestAnimationFrame(loop);
     };
@@ -342,34 +327,82 @@ export default function TrainingComparison() {
     return () => cancelAnimationFrame(raf);
   }, [initPts, buildGaussDots]);
 
+  // ── draw a loss panel ──
+  function drawLossPanel(cx, x, y, w, h, label, value, color, progress) {
+    roundRect(cx, x, y, w, h, 5);
+    cx.fillStyle = "rgba(255,255,255,0.88)"; cx.fill();
+    cx.strokeStyle = `rgba(${color[0]},${color[1]},${color[2]},0.2)`; cx.lineWidth = 1; cx.stroke();
+    cx.fillStyle = "#6b7b8d"; cx.font = "9px monospace"; cx.fillText(label, x + 8, y + 14);
+    cx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`; cx.font = "bold 13px monospace";
+    cx.fillText(value.toFixed(4), x + 8, y + 30);
+    // progress bar
+    cx.fillStyle = "#e8ecf1"; cx.fillRect(x + 8, y + h - 5, w - 16, 2);
+    cx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${0.4 + progress * 0.6})`;
+    cx.fillRect(x + 8, y + h - 5, (w - 16) * clamp(progress, 0, 1), 2);
+  }
+
+  // ── draw legend ──
+  function drawLegend(cx, stage) {
+    const lx = CW - 195, ly = CH - 52;
+    const lw = 183, lh = stage >= 2 ? 42 : 26;
+    roundRect(cx, lx, ly + (stage >= 2 ? 0 : 16), lw, lh, 5);
+    cx.fillStyle = "rgba(255,255,255,0.88)"; cx.fill();
+    cx.strokeStyle = "#d0d8e0"; cx.lineWidth = 1; cx.stroke();
+
+    if (stage === 1) {
+      glowDot(cx, lx + 14, ly + 29, 3.5, C_BLUE, 8, 0.9);
+      cx.fillStyle = "#556677"; cx.font = "10px monospace";
+      cx.fillText("image embedding  z\u2080", lx + 26, ly + 33);
+    } else {
+      glowDot(cx, lx + 14, ly + 14, 3.5, C_BLUE, 8, 0.9);
+      cx.fillStyle = "#556677"; cx.font = "10px monospace";
+      const blueLabel = stage === 2 ? "image embedding (frozen)" : "image embedding (training)";
+      cx.fillText(blueLabel, lx + 26, ly + 18);
+      glowDot(cx, lx + 14, ly + 34, 2.5, C_ORANGE, 6, 0.9);
+      cx.fillText("Gaussian prior  \uD835\uDCA9(0,I)", lx + 26, ly + 38);
+    }
+  }
+
   // ── pipeline node labels ──
   const pipeLabels = {
     1: {
-      row1: ["Image", "\u2192", "GE (tokenize)", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
-      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", ""],
+      row1: ["Image", "\u2192", "GE", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "\u2112recon"],
+      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080"],
       row1Active: true, row2Active: false,
     },
     2: {
-      row1: ["Image", "\u2192", "GE (tokenize)", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
-      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", ""],
+      row1: ["Image", "\u2192", "GE", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
+      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", "|", "\u2112flow"],
       row1Active: false, row2Active: true,
     },
     3: {
-      row1: ["Image", "\u2192", "GE (tokenize)", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
-      row2: ["\uD835\uDCA9(0,I)", "\u2192", "GE (denoise)", "\u2192", "z\u209C", "\u27F6", "z\u2080", ""],
+      row1: ["Image", "\u2192", "GE", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "\u2112recon"],
+      row2: ["\uD835\uDCA9(0,I)", "\u2192", "GE", "\u2192", "z\u209C", "\u27F6", "z\u2080", "|", "\u2112flow"],
       row1Active: true, row2Active: true,
     },
   };
 
   const pipe = pipeLabels[stage];
   const isJoint = stage === 3;
-  const colorClass = isJoint ? "tc-gold" : stage === 1 ? "tc-blue" : "tc-purp";
 
   const stageInfo = {
-    1: { badge: "Stage 1: Tokenizer Training", desc: "The Generative Encoder maps images to latent codes z\u2080. Points converge to structured clusters as training progresses." },
-    2: { badge: "Stage 2: Denoiser Training", desc: "z\u2080 is frozen. Each trajectory starts from Gaussian noise and bends toward its nearest z\u2080 \u2014 the denoiser learns to reverse the noising process." },
-    3: { badge: "UNITE: Joint Training", desc: "Both trained simultaneously \u2014 z\u2080 moves as the Generative Encoder trains, while denoising trajectories bend in real time toward their nearest z\u2080." },
+    1: { badge: "Stage 1: Tokenizer Training", desc: "The Generative Encoder maps images to latent embeddings z\u2080, trained with reconstruction loss. Points converge to structured clusters as training progresses." },
+    2: { badge: "Stage 2: Denoiser Training", desc: "z\u2080 is frozen. Trajectories start from Gaussian noise and bend toward the nearest z\u2080 \u2014 the denoiser learns to reverse the noising process via flow matching loss." },
+    3: { badge: "UNITE: Joint Training", desc: "Both trained simultaneously \u2014 z\u2080 moves as the Generative Encoder trains while denoising trajectories bend toward their nearest z\u2080. One model, one stage." },
   };
+
+  function renderPipeNode(label, i, isActive, isJointMode, rowIdx) {
+    if (label === "|") return <span key={i} className="tc-pipe-sep">{label}</span>;
+    if (label.startsWith("\u2112")) {
+      const lossColor = label.includes("recon") ? "tc-node-loss-blue" : "tc-node-loss-purp";
+      return <span key={i} className={`tc-node tc-node-loss ${isJointMode ? "tc-node-loss-gold" : lossColor}`}>{label}</span>;
+    }
+    if (i % 2 === 1) {
+      return <span key={i} className={`tc-arr ${isJointMode ? "tc-arr-gold" : isActive ? "tc-arr-on" : ""}`}>{label}</span>;
+    }
+    const baseColor = isJointMode ? "tc-node-gold" : rowIdx === 0 ? "tc-node-blue" : "tc-node-purp";
+    return <span key={i} className={`tc-node ${baseColor}`}>{label}</span>;
+  }
 
   return (
     <div className="tc-wrap">
@@ -380,19 +413,10 @@ export default function TrainingComparison() {
 
       <div className={`tc-pipeline ${isJoint ? "tc-pipeline-joint" : ""}`}>
         <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
-          {pipe.row1.map((label, i) =>
-            i % 2 === 1
-              ? <span key={i} className={`tc-arr ${isJoint ? "tc-arr-gold" : "tc-arr-on"}`}>{label}</span>
-              : <span key={i} className={`tc-node ${isJoint ? "tc-node-gold" : "tc-node-blue"}`}>{label}</span>
-          )}
+          {pipe.row1.map((label, i) => renderPipeNode(label, i, pipe.row1Active, isJoint, 0))}
         </div>
         <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
-          {pipe.row2.map((label, i) =>
-            label === "" ? null
-              : label === "" ? <span key={i} className="tc-node tc-node-sm">{label}</span>
-              : i % 2 === 1 ? <span key={i} className={`tc-arr ${isJoint ? "tc-arr-gold" : pipe.row2Active ? "tc-arr-on" : ""}`}>{label}</span>
-              : <span key={i} className={`tc-node ${isJoint ? "tc-node-gold" : "tc-node-purp"}`}>{label}</span>
-          )}
+          {pipe.row2.map((label, i) => renderPipeNode(label, i, pipe.row2Active, isJoint, 1))}
         </div>
       </div>
 
