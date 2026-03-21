@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import LatentAnimation from "./LatentAnimation";
+import TrainingComparison from "./TrainingComparison";
 
 const navItems = [
   { label: "Core Idea", href: "#idea" },
@@ -302,6 +303,16 @@ function App() {
             </div>
 
           </div>
+        </section>
+
+        <section className="section" id="training-animation">
+          <SectionHeading
+            kicker="How it works"
+            title="Two-Stage vs. Joint Training"
+            subtitle="Traditional latent diffusion trains tokenizer and denoiser in separate stages. UNITE trains both jointly through a shared Generative Encoder."
+            small
+          />
+          <TrainingComparison />
         </section>
 
         <section className="section opening-section" id="story">
