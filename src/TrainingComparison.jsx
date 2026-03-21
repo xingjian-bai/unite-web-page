@@ -137,7 +137,7 @@ export default function TrainingComparison() {
         ex: rnd(40, CW - 40), ey: rnd(40, CH - 40),
         targetIdx: ni,
         off1: rnd(-55, 55), off2: rnd(-55, 55),
-        lerpSpd: rnd(0.013, 0.024),
+        lerpSpd: rnd(0.005, 0.012),
       });
     }
   }, []);
@@ -346,12 +346,12 @@ export default function TrainingComparison() {
   const pipeLabels = {
     1: {
       row1: ["Image", "\u2192", "GE (tokenize)", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
-      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", "(frozen)"],
+      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", ""],
       row1Active: true, row2Active: false,
     },
     2: {
       row1: ["Image", "\u2192", "GE (tokenize)", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
-      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", "(frozen)"],
+      row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", ""],
       row1Active: false, row2Active: true,
     },
     3: {
@@ -389,7 +389,7 @@ export default function TrainingComparison() {
         <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
           {pipe.row2.map((label, i) =>
             label === "" ? null
-              : label === "(frozen)" ? <span key={i} className="tc-node tc-node-sm">{label}</span>
+              : label === "" ? <span key={i} className="tc-node tc-node-sm">{label}</span>
               : i % 2 === 1 ? <span key={i} className={`tc-arr ${isJoint ? "tc-arr-gold" : pipe.row2Active ? "tc-arr-on" : ""}`}>{label}</span>
               : <span key={i} className={`tc-node ${isJoint ? "tc-node-gold" : "tc-node-purp"}`}>{label}</span>
           )}
