@@ -373,12 +373,12 @@ export default function TrainingComparison() {
   // ── pipeline node labels ──
   const pipeLabels = {
     1: {
-      row1: ["Image", "\u2192", "GE", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "L_recon"],
+      row1: ["Image", "\u2192", "Encoder", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "L_recon"],
       row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080"],
       row1Active: true, row2Active: false,
     },
     2: {
-      row1: ["Image", "\u2192", "GE", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
+      row1: ["Image", "\u2192", "Encoder", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302"],
       row2: ["\uD835\uDCA9(0,I)", "\u2192", "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", "|", "L_flow"],
       row1Active: false, row2Active: true,
     },
@@ -393,7 +393,7 @@ export default function TrainingComparison() {
   const isJoint = stage === 3;
 
   const stageInfo = {
-    1: { badge: "Stage 1: Tokenizer Training", desc: "The Generative Encoder maps images to latent embeddings z\u2080, trained with reconstruction loss. Points converge to structured clusters as training progresses." },
+    1: { badge: "Stage 1: Tokenizer Training", desc: "The encoder maps images to latent embeddings z\u2080, trained with reconstruction loss. Points converge to structured clusters as training progresses." },
     2: { badge: "Stage 2: Denoiser Training", desc: "z\u2080 is frozen. Trajectories start from Gaussian noise and bend toward the nearest z\u2080 \u2014 the denoiser learns to reverse the noising process via flow matching loss." },
     3: { badge: "UNITE: Joint Training", desc: "Both trained simultaneously \u2014 z\u2080 moves as the Generative Encoder trains while denoising trajectories bend toward their nearest z\u2080. One model, one stage." },
   };
