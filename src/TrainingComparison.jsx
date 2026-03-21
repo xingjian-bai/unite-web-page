@@ -429,6 +429,13 @@ export default function TrainingComparison() {
         <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
           {pipe.row1.map((label, i) => renderPipeNode(label, i, pipe.row1Active, isJoint, 0))}
         </div>
+        {isJoint && (
+          <div className="tc-shared-bridge">
+            <span className="tc-shared-bracket" />
+            <span className="tc-shared-label">shared weights</span>
+            <span className="tc-shared-bracket" />
+          </div>
+        )}
         <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
           {pipe.row2.map((label, i) => renderPipeNode(label, i, pipe.row2Active, isJoint, 1))}
         </div>
