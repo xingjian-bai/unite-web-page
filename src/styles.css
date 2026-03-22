@@ -908,9 +908,9 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 15px;
+  padding: 6px 18px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.5s;
 }
@@ -940,8 +940,8 @@ button {
 .tc-prow {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 8px 16px;
+  gap: 3px;
+  padding: 10px 18px;
   border-radius: 9px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -963,7 +963,7 @@ button {
   border-top: 1px dashed rgba(180,83,9,0.35);
 }
 .tc-shared-label {
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #b45309;
   letter-spacing: 0.03em;
@@ -974,9 +974,9 @@ button {
   background: rgba(254,249,231,0.8);
 }
 .tc-node {
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 6px;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 500;
   border: 1px solid transparent;
   transition: all 0.4s;
@@ -984,12 +984,12 @@ button {
 .tc-node-blue { color: #2563eb; border-color: rgba(37,99,235,0.2); background: #eef4ff; }
 .tc-node-purp { color: #7c3aed; border-color: rgba(124,58,237,0.2); background: #f3eeff; }
 .tc-node-gold { color: #b45309; border-color: rgba(180,83,9,0.2); background: #fef9e7; }
-.tc-node-sm { font-size: 0.68rem; color: #94a3b8; border: none; background: none; padding: 0 4px; }
-.tc-arr { color: #cbd5e1; font-size: 0.85rem; padding: 0 4px; }
+.tc-node-sm { font-size: 0.8rem; color: #94a3b8; border: none; background: none; padding: 0 5px; }
+.tc-arr { color: #cbd5e1; font-size: 1rem; padding: 0 5px; }
 .tc-arr-on { color: #64748b; }
 .tc-arr-gold { color: #b45309; }
-.tc-pipe-sep { color: #d1d5db; padding: 0 4px; font-size: 0.8rem; }
-.tc-node-loss { font-size: 0.75rem; font-style: italic; font-weight: 500; border: 1px dashed; padding: 3px 8px; }
+.tc-pipe-sep { color: #d1d5db; padding: 0 5px; font-size: 0.95rem; }
+.tc-node-loss { font-size: 0.88rem; font-style: italic; font-weight: 500; border: 1px dashed; padding: 4px 10px; }
 .tc-node-loss-blue { color: #3b82f6; border-color: rgba(59,130,246,0.3); background: #eef4ff; }
 .tc-node-loss-purp { color: #7c3aed; border-color: rgba(124,58,237,0.3); background: #f3eeff; }
 .tc-node-loss-gold { color: #b45309; border-color: rgba(180,83,9,0.3); background: #fef9e7; }
@@ -1002,12 +1002,12 @@ button {
   height: auto;
 }
 .tc-desc {
-  max-width: 700px;
+  max-width: 760px;
   text-align: center;
   color: #64748b;
-  font-size: 0.8rem;
-  line-height: 1.6;
-  min-height: 32px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  min-height: 36px;
 }
 .tc-controls {
   display: flex;
@@ -1015,13 +1015,13 @@ button {
   align-items: center;
 }
 .tc-btn {
-  padding: 6px 16px;
+  padding: 7px 20px;
   border-radius: 7px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   color: #64748b;
   cursor: pointer;
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   transition: all 0.2s;
 }
 .tc-btn:hover { border-color: #3b82f6; color: #3b82f6; background: #eef4ff; }
