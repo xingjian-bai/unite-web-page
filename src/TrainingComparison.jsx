@@ -303,7 +303,7 @@ export default function TrainingComparison() {
           g.addColorStop(1, `rgba(${C_GOLD[0]},${C_GOLD[1]},${C_GOLD[2]},0)`);
           cx.fillStyle = g; cx.beginPath(); cx.arc(pt.x, pt.y, 16, 0, Math.PI * 2); cx.fill();
         }
-        glowDot(cx, pt.x, pt.y, 4 + settled, C_BLUE, 16 + settled * 12, alpha);
+        glowDot(cx, pt.x, pt.y, 3.5 + settled, C_BLUE, 12 + settled * 10, alpha * 0.8);
       });
 
       // ── HUD: title ──
