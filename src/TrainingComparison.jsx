@@ -137,7 +137,7 @@ export default function TrainingComparison() {
   const initTrajs = useCallback(() => {
     const s = stateRef.current;
     s.trajs = [];
-    const TRAJ_SIG_X = 65, TRAJ_SIG_Y = 55; // near-isotropic tight Gaussian
+    const TRAJ_SIG_X = 85, TRAJ_SIG_Y = 60; // tight Gaussian for visible center concentration
     for (let i = 0; i < N_TRAJ; i++) {
       const sx = clamp(GCX + randn() * TRAJ_SIG_X, 15, CW - 15);
       const sy = clamp(GCY + randn() * TRAJ_SIG_Y, 15, CH - 15);
