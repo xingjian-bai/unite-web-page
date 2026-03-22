@@ -137,19 +137,6 @@ export default function TrainingComparison() {
     }
   }, []);
 
-  // Compute a soft target: near the blue dot but biased toward the start point
-  function computeSoftTarget(sx, sy, tgtX, tgtY) {
-    const dx = sx - tgtX, dy = sy - tgtY;
-    const len = Math.hypot(dx, dy) || 1;
-    // Offset toward start by 15-35px + small random perpendicular jitter
-    const along = rnd(15, 35);
-    const perp = rnd(-20, 20);
-    return {
-      tx: tgtX + (dx / len) * along + (-dy / len) * perp,
-      ty: tgtY + (dy / len) * along + (dx / len) * perp,
-    };
-  }
-
   const initTrajs = useCallback(() => {
     const s = stateRef.current;
     s.trajs = [];
@@ -157,15 +144,11 @@ export default function TrainingComparison() {
       const sx = clamp(GCX + randn() * SIG_X, 15, CW - 15);
       const sy = clamp(GCY + randn() * SIG_Y, 15, CH - 15);
       const ni = nearestPt(s.pts, sx, sy);
-      const tgt = s.pts[ni];
-      // Soft target for Stage 2: near blue dot, biased toward start
-      const { tx, ty } = computeSoftTarget(sx, sy, tgt.z0x, tgt.z0y);
       s.trajs.push({
         sx, sy,
         ex: rnd(40, CW - 40), ey: rnd(40, CH - 40),
         targetIdx: ni,
-        softTx: tx, softTy: ty,
-        off1: rnd(-30, 30), off2: rnd(-30, 30),
+        off1: rnd(-55, 55), off2: rnd(-55, 55),
         lerpSpd: rnd(0.013, 0.024),
       });
     }
@@ -226,24 +209,27 @@ export default function TrainingComparison() {
         const t = smoothRamp(clamp(s.frame / S1_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, t); p.x = pos.x; p.y = pos.y; });
       } else if (s.stage === 2) {
-        // Orange trajectories toward soft targets (near but not at blue dots)
-        const progress = smoothRamp(clamp(s.frame / S2_FRAMES, 0, 1));
-        const spd2 = 0.006 + progress * 0.034;
+        // Original behavior: constant lerp toward nearest blue dot (frozen)
         s.trajs.forEach(tr => {
-          tr.ex = lerp(tr.ex, tr.softTx, spd2);
-          tr.ey = lerp(tr.ey, tr.softTy, spd2);
+          const tgt = s.pts[tr.targetIdx];
+          tr.ex = lerp(tr.ex, tgt.x, tr.lerpSpd);
+          tr.ey = lerp(tr.ey, tgt.y, tr.lerpSpd);
         });
       } else {
-        // Blue dots: move first (use full time range)
-        const tPts = easeO2(clamp(s.frame / S3_FRAMES, 0, 1));
+        // Blue dots: smooth movement with nonzero initial speed
+        const tPts = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, tPts); p.x = pos.x; p.y = pos.y; });
-        // Orange trajectories: delayed start (begin after ~15% of animation)
-        const delayed = clamp((s.frame - S3_FRAMES * 0.12) / (S3_FRAMES * 0.88), 0, 1);
-        const anneal = smoothRamp(delayed);
-        const spd3 = 0.005 + anneal * 0.035;
+        // Orange trajectories: original RBF approach (smooth sigma annealing)
+        // Target is RBF-weighted blend of ALL blue dots, evaluated at fixed (sx,sy).
+        // As sigma shrinks 220→30, blend narrows from global average to nearest blue.
+        // This is inherently smooth — no sudden target switches.
+        const anneal = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
+        const sigma = lerp(220, 30, anneal);
         s.trajs.forEach(tr => {
-          tr.ex = lerp(tr.ex, tr.softTx, spd3);
-          tr.ey = lerp(tr.ey, tr.softTy, spd3);
+          const [tx, ty] = rbfTarget(s.pts, tr.sx, tr.sy, sigma);
+          const spd = tr.lerpSpd * anneal * 4;
+          tr.ex = lerp(tr.ex, tx, spd);
+          tr.ey = lerp(tr.ey, ty, spd);
         });
       }
 
