@@ -276,12 +276,12 @@ export default function TrainingComparison() {
             cx.beginPath(); cx.moveTo(pp1.x, pp1.y); cx.lineTo(pp2.x, pp2.y); cx.stroke();
           }
           // origin dot (Gaussian-sampled)
-          glowDot(cx, sx, sy, 2.0, C_ORANGE, 6, 0.45 * fi);
+          glowDot(cx, sx, sy, 1.6, C_ORANGE, 5, 0.25 * fi);
           // endpoint dot — colour shifts toward blue as it nears target
           const tgt = s.stage === 3 ? s.pts[nearestPt(s.pts, ex, ey)] : s.pts[tr.targetIdx];
           const d = Math.hypot(ex - tgt.x, ey - tgt.y);
           const near = clamp(1 - d / 90, 0, 1);
-          glowDot(cx, ex, ey, 2.6, ztRGB(near), 8, 0.60 * fi);
+          glowDot(cx, ex, ey, 2.2, ztRGB(near), 7, 0.40 * fi);
         });
       }
 
@@ -296,7 +296,7 @@ export default function TrainingComparison() {
           g.addColorStop(1, `rgba(${C_GOLD[0]},${C_GOLD[1]},${C_GOLD[2]},0)`);
           cx.fillStyle = g; cx.beginPath(); cx.arc(pt.x, pt.y, 16, 0, Math.PI * 2); cx.fill();
         }
-        glowDot(cx, pt.x, pt.y, 3.5 + settled, C_BLUE, 10 + settled * 10, alpha);
+        glowDot(cx, pt.x, pt.y, 4 + settled, C_BLUE, 16 + settled * 12, alpha);
       });
 
       // ── HUD: title ──
