@@ -226,11 +226,11 @@ export default function TrainingComparison() {
         const tPts = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, tPts); p.x = pos.x; p.y = pos.y; });
         // Orange trajectories: follow assigned blue dot (same assignment as Stage 2)
-        // targetIdx is based on final positions → no cross-overs
-        const anneal = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
+        // smoothRamp gives nonzero initial speed — no sudden catch-up jumps
+        const anneal = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
         s.trajs.forEach(tr => {
           const tgt = s.pts[tr.targetIdx];
-          const spd = tr.lerpSpd * anneal * 4;
+          const spd = 0.003 + tr.lerpSpd * anneal * 5;
           tr.ex = lerp(tr.ex, tgt.x, spd);
           tr.ey = lerp(tr.ey, tgt.y, spd);
         });
