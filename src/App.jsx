@@ -465,7 +465,7 @@ function App() {
 
             <article className="analysis-card reveal">
               <hr className="analysis-divider" />
-              <h3>Backpropagating denoising gradients through to the encoder</h3>
+              <h3>Stop-gradient through clean latents and its effect on alignment</h3>
               <p>
                 In UNITE, we stop denoising gradients from flowing through the clean latent into the tokenization pathway. After the tokenization pass produces z₀ = GE(x), we apply stop-gradient before constructing the noised latent z_t used in the denoising pass. As a result, the flow-matching objective updates GE only through the second (denoising) forward pass, rather than also directly shaping tokenization through gradients flowing into z₀.
               </p>
@@ -473,16 +473,11 @@ function App() {
                 Importantly, this does <em>not</em> decouple tokenization and generation: in the weight-shared Generative Encoder, reconstruction and denoising still act on the same set of network parameters, so both objectives jointly shape the learned representation. The stop-gradient only removes the more direct route in which denoising gradients also flow through the clean latent itself.
               </p>
               <p>
-                Looking at rFID/gFID, removing the stop-gradient improves the separate encoder–denoiser ablation from 2.60/1.30 to 2.24/0.85 (gFID/rFID), indicating that end-to-end joint training of tokenization and generation is promising. As noted in the concurrent Unified Latents (their Appendix B), obtaining the best performance in the no-stop-gradient setting requires tuning the denoising-to-reconstruction loss ratio. By contrast, for UNITE, we obtain the best performance (gFID = 2.12, rFID = 1.1) with stop-gradient in place.
+                Looking at gFID/rFID, removing the stop-gradient improves the separate encoder–denoiser ablation from 2.60/1.30 to 2.24/0.85, indicating that end-to-end joint training of tokenization and generation is promising. As noted in the concurrent Unified Latents (their Appendix B), obtaining the best performance in the no-stop-gradient setting requires tuning the denoising-to-reconstruction loss ratio. By contrast, for UNITE, we obtain the best performance (gFID = 2.12, rFID = 1.1) with stop-gradient in place.
               </p>
-            </article>
-
-            <article className="analysis-card reveal">
-              <hr className="analysis-divider" />
-              <h3>Backpropagating denoising hurts representation alignment</h3>
               <p>
                 Removing the stop-gradient and backpropagating denoising gradients through the latent <em>weakens late-layer alignment</em>, even though the denoising objective still matches the final latent target.
-                Cosine similarity on the final latents decreases at lower denoising timesteps in the no-stop-gradient setting, suggesting that direct gradient backpropagation from denoising into tokenization leads to a less cleanly shared representation.
+                Cosine similarity on the final latents also decreases at lower denoising timesteps in the no-stop-gradient setting, suggesting that direct gradient backpropagation from denoising into tokenization leads to a less cleanly shared representation.
               </p>
               <div className="analysis-frame">
                 <img src="./assets/figures/cka_analysis_right.png" alt="Stop-gradient effect on representation alignment" loading="lazy" />
