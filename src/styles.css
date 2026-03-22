@@ -844,7 +844,10 @@ button {
 
 .analysis-grid {
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1rem;
+  max-width: var(--page-width);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .analysis-frame,
@@ -888,7 +891,7 @@ button {
 
 .analysis-divider {
   border: none;
-  border-top: 2px solid rgba(255, 255, 255, 0.35);
+  border-top: 2px solid rgba(0, 0, 0, 0.10);
   margin: 0.5rem 0 0.75rem 0;
   width: 100%;
 }
@@ -993,6 +996,7 @@ button {
 .tc-canvas {
   border-radius: 12px;
   border: 1px solid #e2e8f0;
+  width: 100%;
   display: block;
   max-width: 100%;
   height: auto;

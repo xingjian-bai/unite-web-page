@@ -456,10 +456,10 @@ function App() {
               <h3>Tokenization and denoising are intrinsically aligned</h3>
               <p>
                 We measure alignment between tokenization and denoising activations using CKA and cosine similarity. Given an input image, we first record intermediate activations along the tokenization pathway, then corrupt the encoded latent and record the corresponding denoising-pathway activations.
-                <strong> Left:</strong> both the weight-shared UNITE model and the separate encoder–denoiser ablation exhibit strong alignment, especially in later layers, indicating that <em>tokenization and denoising are intrinsically aligned tasks</em>.
+                Both the weight-shared UNITE model and the separate encoder–denoiser ablation exhibit strong alignment, especially in later layers, indicating that <em>tokenization and denoising are intrinsically aligned tasks</em>.
               </p>
               <div className="analysis-frame">
-                <img src="./assets/figures/cka_analysis_final_v3.png" alt="Representation alignment between tokenization and generation" loading="lazy" />
+                <img src="./assets/figures/cka_analysis_left.png" alt="CKA alignment between tokenization and generation" loading="lazy" />
               </div>
             </article>
 
@@ -481,10 +481,12 @@ function App() {
               <hr className="analysis-divider" />
               <h3>Backpropagating denoising hurts representation alignment</h3>
               <p>
-                As shown in the alignment figure above:
-                <strong> Left:</strong> removing the stop-gradient and backpropagating denoising gradients through the latent <em>weakens late-layer alignment</em>, even though the denoising objective still matches the final latent target.
-                <strong> Right:</strong> cosine similarity on the final latents decreases at lower denoising timesteps in the no-stop-gradient setting, suggesting that direct gradient backpropagation from denoising into tokenization leads to a less cleanly shared representation.
+                Removing the stop-gradient and backpropagating denoising gradients through the latent <em>weakens late-layer alignment</em>, even though the denoising objective still matches the final latent target.
+                Cosine similarity on the final latents decreases at lower denoising timesteps in the no-stop-gradient setting, suggesting that direct gradient backpropagation from denoising into tokenization leads to a less cleanly shared representation.
               </p>
+              <div className="analysis-frame">
+                <img src="./assets/figures/cka_analysis_right.png" alt="Stop-gradient effect on representation alignment" loading="lazy" />
+              </div>
             </article>
 
             <article className="analysis-card reveal">
