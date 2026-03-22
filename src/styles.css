@@ -933,7 +933,7 @@ button {
   transition: border-color 0.5s, box-shadow 0.5s;
 }
 .tc-prow-offset-r {
-  margin-left: 250px;
+  margin-left: 300px;
 }
 .tc-prow {
   display: flex;
