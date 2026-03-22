@@ -211,7 +211,7 @@ export default function TrainingComparison() {
           tr.ey = lerp(tr.ey, tgt.y, tr.lerpSpd);
         });
       } else {
-        const t = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
+        const t = easeO3(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, t); p.x = pos.x; p.y = pos.y; });
         const sigma = lerp(220, 30, t);
         s.trajs.forEach(tr => {
