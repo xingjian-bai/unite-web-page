@@ -657,7 +657,7 @@ export default function LatentAnimation() {
       style={{
         position: "relative",
         width: "100%",
-        maxWidth: 820,
+        maxWidth: 900,
         aspectRatio: `1 / ${ASPECT}`,
         margin: "0 auto",
         background: "rgba(248,246,241,0.5)",
