@@ -329,7 +329,7 @@ export default function TrainingComparison() {
       } else {
         const lp = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
         const lossR = 2.8 * (1 - lp) + 0.06;
-        const lossF = 2.2 * (1 - lp * 0.9) + 0.08;
+        const lossF = 2.4 * (1 - lp) + 0.08;
         drawLossPanel(cx, 12, CH - 52, 140, 40, "Recon Loss", lossR, [59, 130, 246], lp);
         drawLossPanel(cx, 160, CH - 52, 140, 40, "Flow Loss", lossF, [140, 70, 210], lp);
       }
