@@ -15,7 +15,7 @@ const CLUSTERS = [
   { x: 488, y: 375 }, { x: 228, y: 368 }, { x: 342, y: 228 },
 ];
 const PPC = 7, N_TRAJ = 160;
-const S1_FRAMES = 360, S3_FRAMES = 500;
+const S1_FRAMES = 360, S2_FRAMES = 400, S3_FRAMES = 500;
 
 const rnd = (a, b) => a + Math.random() * (b - a);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -175,6 +175,11 @@ export default function TrainingComparison() {
       Object.assign(p, ns);
     });
     initTrajs();
+    // Lock each trajectory's final target to the nearest blue dot at its FINAL position
+    // This prevents late target-switching as blue dots move
+    s.trajs.forEach(tr => {
+      tr.lockedTarget = nearestPt(s.pts.map(p => ({ x: p.z0x, y: p.z0y })), tr.sx, tr.sy);
+    });
     setStage(3);
   }, [initTrajs]);
 
@@ -205,23 +210,24 @@ export default function TrainingComparison() {
         const t = easeIO(clamp(s.frame / S1_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, t); p.x = pos.x; p.y = pos.y; });
       } else if (s.stage === 2) {
+        const progress = easeIO(clamp(s.frame / S2_FRAMES, 0, 1));
+        const spd2 = progress * 0.04; // ramp up lerp speed with progress
         s.trajs.forEach(tr => {
           const tgt = s.pts[tr.targetIdx];
-          tr.ex = lerp(tr.ex, tgt.x, tr.lerpSpd);
-          tr.ey = lerp(tr.ey, tgt.y, tr.lerpSpd);
+          tr.ex = lerp(tr.ex, tgt.x, spd2);
+          tr.ey = lerp(tr.ey, tgt.y, spd2);
         });
       } else {
         // Blue dots: ease-out (fast start, slow settle)
         const tPts = easeO3(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, tPts); p.x = pos.x; p.y = pos.y; });
-        // Trajectories: ease-in-out (smooth gradual convergence, no abrupt switches)
+        // Trajectories: lerp toward locked target (no RBF recomputation = no late switches)
         const anneal = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
-        const sigma = lerp(220, 30, anneal);
+        const spd3 = anneal * 0.04;
         s.trajs.forEach(tr => {
-          const [tx, ty] = rbfTarget(s.pts, tr.sx, tr.sy, sigma);
-          const spd = tr.lerpSpd * anneal * 4;
-          tr.ex = lerp(tr.ex, tx, spd);
-          tr.ey = lerp(tr.ey, ty, spd);
+          const tgt = s.pts[tr.lockedTarget !== undefined ? tr.lockedTarget : tr.targetIdx];
+          tr.ex = lerp(tr.ex, tgt.x, spd3);
+          tr.ey = lerp(tr.ey, tgt.y, spd3);
         });
       }
 
@@ -313,7 +319,7 @@ export default function TrainingComparison() {
         const loss = 2.8 * (1 - easeIO(lp)) + 0.06;
         drawLossPanel(cx, 12, CH - 52, 170, 40, "Recon Loss", loss, [59, 130, 246], lp);
       } else if (s.stage === 2) {
-        const lp = clamp(s.frame / 600, 0, 1);
+        const lp = clamp(s.frame / S2_FRAMES, 0, 1);
         const loss = 2.4 * (1 - easeIO(lp)) + 0.08;
         drawLossPanel(cx, 12, CH - 52, 170, 40, "Flow Loss", loss, [140, 70, 210], lp);
       } else {
