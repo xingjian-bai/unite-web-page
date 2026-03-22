@@ -389,7 +389,7 @@ function App() {
                 For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the Generative Encoder.
               </p>
             </div>
-            <div className="loop-panel-figure">
+            <div className="loop-panel-figure analysis-frame-narrow">
               <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
             </div>
           </div>
