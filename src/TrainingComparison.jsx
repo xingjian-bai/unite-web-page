@@ -39,8 +39,10 @@ function ztRGB(t) {
 
 export default function TrainingComparison() {
   const canvasRef = useRef(null);
+  const pipelineRef = useRef(null);
   const stateRef = useRef({ pts: [], trajs: [], gaussDots: [], frame: 0, stage: 1 });
   const [stage, setStage] = useState(1);
+  const [bridgeStyle, setBridgeStyle] = useState({});
 
   // ── helpers ──
   function glowDot(cx, x, y, r, [cr, cg, cb], gs, alpha = 1) {
@@ -393,6 +395,19 @@ export default function TrainingComparison() {
   const pipe = pipeLabels[stage];
   const isJoint = stage === 3;
 
+  // Measure GE node positions to place the bridge
+  useEffect(() => {
+    if (!isJoint || !pipelineRef.current) return;
+    const container = pipelineRef.current;
+    const geNodes = container.querySelectorAll("[data-ge]");
+    if (geNodes.length < 2) return;
+    const containerRect = container.getBoundingClientRect();
+    const r0 = geNodes[0].getBoundingClientRect();
+    const r1 = geNodes[1].getBoundingClientRect();
+    const left = ((r0.left + r1.left) / 2 - containerRect.left) + (r0.width / 2) - 36;
+    setBridgeStyle({ left: `${left}px`, width: "72px" });
+  }, [isJoint, stage]);
+
   const stageInfo = {
     1: { badge: "Stage 1: Tokenizer Training", desc: "The encoder maps images to latent embeddings z\u2080, trained with reconstruction loss. Points converge to structured clusters as training progresses." },
     2: { badge: "Stage 2: Denoiser Training", desc: "z\u2080 is frozen. Trajectories start from Gaussian noise and bend toward the nearest z\u2080 \u2014 the denoiser learns to reverse the noising process via flow matching loss." },
@@ -409,7 +424,8 @@ export default function TrainingComparison() {
       return <span key={i} className={`tc-arr ${isJointMode ? "tc-arr-gold" : isActive ? "tc-arr-on" : ""}`}>{label}</span>;
     }
     const baseColor = isJointMode ? "tc-node-gold" : rowIdx === 0 ? "tc-node-blue" : "tc-node-purp";
-    return <span key={i} className={`tc-node ${baseColor}`}>{label}</span>;
+    const isGE = label === "GE";
+    return <span key={i} className={`tc-node ${baseColor}`} {...(isGE ? {"data-ge": "true"} : {})}>{label}</span>;
   }
 
   return (
@@ -427,18 +443,14 @@ export default function TrainingComparison() {
       </div>
 
       <div className={`tc-pipeline ${isJoint ? "tc-pipeline-joint" : ""}`}>
-        <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
-          {pipe.row1.map((label, i) => renderPipeNode(label, i, pipe.row1Active, isJoint, 0))}
-        </div>
-        {isJoint && (
-          <div className="tc-shared-bridge">
-            <span className="tc-shared-bracket" />
-            <span className="tc-shared-label">shared weights</span>
-            <span className="tc-shared-bracket" />
+        <div className="tc-pipeline-rows" ref={pipelineRef}>
+          <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
+            {pipe.row1.map((label, i) => renderPipeNode(label, i, pipe.row1Active, isJoint, 0))}
           </div>
-        )}
-        <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
-          {pipe.row2.map((label, i) => renderPipeNode(label, i, pipe.row2Active, isJoint, 1))}
+          <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
+            {pipe.row2.map((label, i) => renderPipeNode(label, i, pipe.row2Active, isJoint, 1))}
+          </div>
+          {isJoint && <div className="tc-ge-bridge" style={bridgeStyle}><span className="tc-ge-bridge-label">shared</span></div>}
         </div>
       </div>
 
