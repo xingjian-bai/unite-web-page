@@ -933,7 +933,7 @@ button {
   transition: border-color 0.5s, box-shadow 0.5s;
 }
 .tc-prow-offset-r {
-  margin-left: 120px;
+  margin-left: 100px;
 }
 .tc-prow {
   display: flex;
@@ -946,11 +946,12 @@ button {
   transition: opacity 0.5s, border-color 0.5s;
 }
 .tc-prow-dim { opacity: 0.35; }
-.tc-prow-gold { border-color: rgba(202,138,4,0.25); }
+.tc-prow-gold { border-color: rgba(202,138,4,0.25); width: fit-content; }
 .tc-pipeline-rows {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 5px;
 }
 .tc-ge-bridge {
