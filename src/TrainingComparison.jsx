@@ -21,7 +21,10 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const easeO3 = t => 1 - Math.pow(1 - t, 3);
+const easeO2 = t => 1 - (1 - t) * (1 - t); // quadratic ease-out: fast start, gentle slow
 const easeIO = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+// Smooth ramp with nonzero initial speed: blend of linear + ease-out
+const smoothRamp = t => 0.15 * t + 0.85 * easeO2(t);
 function randn() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-12)) * Math.cos(2 * Math.PI * Math.random()); }
 
 const C_BLUE = [59, 130, 246];
@@ -207,23 +210,25 @@ export default function TrainingComparison() {
       // ── update ──
       s.frame++;
       if (s.stage === 1) {
-        const t = easeIO(clamp(s.frame / S1_FRAMES, 0, 1));
+        // Blue dots: smooth ramp with nonzero initial speed
+        const t = smoothRamp(clamp(s.frame / S1_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, t); p.x = pos.x; p.y = pos.y; });
       } else if (s.stage === 2) {
-        const progress = easeIO(clamp(s.frame / S2_FRAMES, 0, 1));
-        const spd2 = progress * 0.04; // ramp up lerp speed with progress
+        // Orange trajectories: smooth ramp so they start moving immediately
+        const progress = smoothRamp(clamp(s.frame / S2_FRAMES, 0, 1));
+        const spd2 = 0.006 + progress * 0.034; // nonzero initial speed
         s.trajs.forEach(tr => {
           const tgt = s.pts[tr.targetIdx];
           tr.ex = lerp(tr.ex, tgt.x, spd2);
           tr.ey = lerp(tr.ey, tgt.y, spd2);
         });
       } else {
-        // Blue dots: ease-out (fast start, slow settle)
-        const tPts = easeO3(clamp(s.frame / S3_FRAMES, 0, 1));
+        // Blue dots: ease-out but gentler (easeO2 not easeO3)
+        const tPts = easeO2(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, tPts); p.x = pos.x; p.y = pos.y; });
-        // Trajectories: lerp toward locked target (no RBF recomputation = no late switches)
-        const anneal = easeIO(clamp(s.frame / S3_FRAMES, 0, 1));
-        const spd3 = anneal * 0.04;
+        // Orange trajectories: smooth ramp, follows blue more closely
+        const anneal = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
+        const spd3 = 0.005 + anneal * 0.035;
         s.trajs.forEach(tr => {
           const tgt = s.pts[tr.lockedTarget !== undefined ? tr.lockedTarget : tr.targetIdx];
           tr.ex = lerp(tr.ex, tgt.x, spd3);
@@ -237,21 +242,14 @@ export default function TrainingComparison() {
       for (let x = 0; x < CW; x += 50) { cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, CH); cx.stroke(); }
       for (let y = 0; y < CH; y += 50) { cx.beginPath(); cx.moveTo(0, y); cx.lineTo(CW, y); cx.stroke(); }
 
-      // ── Gaussian cloud (Stage 2 & 3) ──
+      // ── subtle background tint for Stage 2 & 3 ──
       if (s.stage >= 2) {
         const fi = clamp(s.frame / 60, 0, 1);
         const bg = cx.createRadialGradient(GCX, GCY, 0, GCX, GCY, 260);
-        bg.addColorStop(0, `rgba(140,70,210,${0.06 * fi})`);
-        bg.addColorStop(0.6, `rgba(140,70,210,${0.03 * fi})`);
+        bg.addColorStop(0, `rgba(140,70,210,${0.04 * fi})`);
+        bg.addColorStop(0.6, `rgba(140,70,210,${0.02 * fi})`);
         bg.addColorStop(1, `rgba(140,70,210,0)`);
         cx.fillStyle = bg; cx.fillRect(0, 0, CW, CH);
-        s.gaussDots.forEach(d => {
-          const b = 0.6 + 0.4 * Math.sin(s.frame * 0.018 + d.ph);
-          cx.globalAlpha = d.a * fi * b;
-          cx.fillStyle = `rgb(${C_PURP[0]},${C_PURP[1]},${C_PURP[2]})`;
-          cx.beginPath(); cx.arc(d.x, d.y, d.r, 0, Math.PI * 2); cx.fill();
-        });
-        cx.globalAlpha = 1;
       }
 
       // ── cluster glows ──
