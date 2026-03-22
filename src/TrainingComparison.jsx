@@ -15,7 +15,7 @@ const CLUSTERS = [
   { x: 488, y: 375 }, { x: 228, y: 368 }, { x: 342, y: 228 },
 ];
 const PPC = 7, N_TRAJ = 160;
-const S1_FRAMES = 360, S2_FRAMES = 400, S3_FRAMES = 500;
+const S1_FRAMES = 360, S2_FRAMES = 500, S3_FRAMES = 620;
 
 const rnd = (a, b) => a + Math.random() * (b - a);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -155,7 +155,7 @@ export default function TrainingComparison() {
         tgtOffX: Math.cos(angle) * radius,
         tgtOffY: Math.sin(angle) * radius,
         off1: rnd(-55, 55), off2: rnd(-55, 55),
-        lerpSpd: rnd(0.013, 0.024),
+        lerpSpd: rnd(0.010, 0.019),
       });
     }
   }, []);
