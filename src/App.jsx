@@ -458,7 +458,7 @@ function App() {
                 We measure alignment between tokenization and denoising activations using CKA and cosine similarity. Given an input image, we first record intermediate activations along the tokenization pathway, then corrupt the encoded latent and record the corresponding denoising-pathway activations.
                 Both the weight-shared UNITE model and the separate encoder–denoiser ablation exhibit strong alignment, especially in later layers, indicating that <em>tokenization and denoising are intrinsically aligned tasks</em>.
               </p>
-              <div className="analysis-frame">
+              <div className="analysis-frame analysis-frame-narrow">
                 <img src="./assets/figures/cka_analysis_left.png" alt="CKA alignment between tokenization and generation" loading="lazy" />
               </div>
             </article>
