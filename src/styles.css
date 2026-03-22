@@ -933,7 +933,7 @@ button {
   transition: border-color 0.5s, box-shadow 0.5s;
 }
 .tc-prow-offset-r {
-  transform: translateX(165px);
+  transform: translateX(162px);
 }
 .tc-rows-joint {
   transform: translateX(-82px);
