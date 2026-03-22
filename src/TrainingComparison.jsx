@@ -377,12 +377,15 @@ export default function TrainingComparison() {
   }
 
   // ── pipeline node labels ──
-  const sharedRow1 = ["Image", "\u2192", stage === 3 ? "GE" : "Encoder", "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "L_recon"];
-  const sharedRow2 = ["\uD835\uDCA9(0,I)", "\u2192", stage === 3 ? "GE" : "Denoiser", "\u2192", "z\u209C", "\u27F6", "z\u2080", "|", "L_flow"];
+  const enc = stage === 3 ? "GE" : "Encoder";
+  const den = stage === 3 ? "GE" : "Denoiser";
+  const frozenTag = stage !== 3 ? "\u2744" : ""; // snowflake for frozen z₀
+  const row1 = ["Image", "\u2192", enc, "\u2192", "z\u2080", "\u2192", "Decoder", "\u2192", "x\u0302", "|", "L_recon"];
+  const row2 = ["z\u2080" + frozenTag, "+", "\uD835\uDCA9(0,I)", "\u2192", "z\u209C", "\u2192", den, "\u2192", "z\u2080", "|", "L_flow"];
   const pipeLabels = {
-    1: { row1: sharedRow1, row2: sharedRow2, row1Active: true, row2Active: false },
-    2: { row1: sharedRow1, row2: sharedRow2, row1Active: false, row2Active: true },
-    3: { row1: sharedRow1, row2: sharedRow2, row1Active: true, row2Active: true },
+    1: { row1, row2, row1Active: true, row2Active: false },
+    2: { row1, row2, row1Active: false, row2Active: true },
+    3: { row1, row2, row1Active: true, row2Active: true },
   };
 
   const pipe = pipeLabels[stage];
@@ -409,12 +412,11 @@ export default function TrainingComparison() {
 
   function renderPipeNode(label, i, isActive, isJointMode, rowIdx) {
     if (label === "|") return <span key={i} className="tc-pipe-sep">{label}</span>;
+    if (label === "+") return <span key={i} className={`tc-arr ${isJointMode ? "tc-arr-gold" : isActive ? "tc-arr-on" : ""}`}>+</span>;
+    if (label === "\u2192") return <span key={i} className={`tc-arr ${isJointMode ? "tc-arr-gold" : isActive ? "tc-arr-on" : ""}`}>{label}</span>;
     if (label.startsWith("L_")) {
       const lossColor = label.includes("recon") ? "tc-node-loss-blue" : "tc-node-loss-purp";
       return <span key={i} className={`tc-node tc-node-loss ${isJointMode ? "tc-node-loss-gold" : lossColor}`}>{label}</span>;
-    }
-    if (i % 2 === 1) {
-      return <span key={i} className={`tc-arr ${isJointMode ? "tc-arr-gold" : isActive ? "tc-arr-on" : ""}`}>{label}</span>;
     }
     const baseColor = isJointMode ? "tc-node-gold" : rowIdx === 0 ? "tc-node-blue" : "tc-node-purp";
     const isGE = label === "GE";
@@ -435,9 +437,9 @@ export default function TrainingComparison() {
         <span>{stageInfo[stage].badge}</span>
       </div>
 
-      <div className={`tc-pipeline ${isJoint ? "tc-pipeline-joint" : ""}`}>
+      <div className="tc-pipeline">
         <div className="tc-pipeline-rows" ref={pipelineRef}>
-          <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>
+          <div className={`tc-prow ${!pipe.row1Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold tc-prow-offset-r" : ""}`}>
             {pipe.row1.map((label, i) => renderPipeNode(label, i, pipe.row1Active, isJoint, 0))}
           </div>
           <div className={`tc-prow ${!pipe.row2Active && !isJoint ? "tc-prow-dim" : ""} ${isJoint ? "tc-prow-gold" : ""}`}>

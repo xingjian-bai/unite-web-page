@@ -932,10 +932,8 @@ button {
   border: 1px solid transparent;
   transition: border-color 0.5s, box-shadow 0.5s;
 }
-.tc-pipeline-joint {
-  border-color: rgba(202,138,4,0.2);
-  box-shadow: 0 0 18px rgba(202,138,4,0.06);
-  padding: 5px;
+.tc-prow-offset-r {
+  margin-left: 120px;
 }
 .tc-prow {
   display: flex;
