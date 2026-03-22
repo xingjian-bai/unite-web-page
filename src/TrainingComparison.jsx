@@ -178,6 +178,13 @@ export default function TrainingComparison() {
       Object.assign(p, ns);
     });
     initTrajs();
+    // Precompute soft targets: near the nearest blue dot's final position, but offset
+    s.trajs.forEach(tr => {
+      const ni = nearestPt(s.pts.map(p => ({ x: p.z0x, y: p.z0y })), tr.sx, tr.sy);
+      const tgt = s.pts[ni];
+      tr.softTx = tgt.z0x + rnd(-40, 40);
+      tr.softTy = tgt.z0y + rnd(-30, 30);
+    });
     setStage(3);
   }, [initTrajs]);
 
@@ -221,12 +228,12 @@ export default function TrainingComparison() {
         // Blue dots: ease-out but gentler (easeO2 not easeO3)
         const tPts = easeO2(clamp(s.frame / S3_FRAMES, 0, 1));
         s.pts.forEach(p => { const pos = qbez(p.sx, p.sy, p.cpx, p.cpy, p.z0x, p.z0y, tPts); p.x = pos.x; p.y = pos.y; });
-        // Orange trajectories: RBF-weighted target, smooth anneal
+        // Orange trajectories: lerp toward fixed soft targets (no RBF recomputation = no jumps)
         const anneal = smoothRamp(clamp(s.frame / S3_FRAMES, 0, 1));
-        const sigma = lerp(220, 30, anneal);
         const spd3 = 0.005 + anneal * 0.035;
         s.trajs.forEach(tr => {
-          const [tx, ty] = rbfTarget(s.pts, tr.sx, tr.sy, sigma);
+          const tx = tr.softTx !== undefined ? tr.softTx : tr.ex;
+          const ty = tr.softTy !== undefined ? tr.softTy : tr.ey;
           tr.ex = lerp(tr.ex, tx, spd3);
           tr.ey = lerp(tr.ey, ty, spd3);
         });
