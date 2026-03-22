@@ -144,11 +144,15 @@ export default function TrainingComparison() {
       const sx = clamp(GCX + randn() * SIG_X, 15, CW - 15);
       const sy = clamp(GCY + randn() * SIG_Y, 15, CH - 15);
       const ni = nearestPt(s.pts, sx, sy);
+      const tgt = s.pts[ni];
+      // Precompute control points based on start → final target (stable, won't flip)
+      const off1 = rnd(-55, 55), off2 = rnd(-55, 55);
+      const { cp1x, cp1y, cp2x, cp2y } = getCP(sx, sy, tgt.z0x, tgt.z0y, off1, off2);
       s.trajs.push({
         sx, sy,
         ex: rnd(40, CW - 40), ey: rnd(40, CH - 40),
         targetIdx: ni,
-        off1: rnd(-55, 55), off2: rnd(-55, 55),
+        cp1x, cp1y, cp2x, cp2y, // locked control points
         lerpSpd: rnd(0.013, 0.024),
       });
     }
@@ -271,8 +275,7 @@ export default function TrainingComparison() {
         const fi = clamp(s.frame / 50, 0, 1);
         const SEG = 24;
         s.trajs.forEach(tr => {
-          const { sx, sy, ex, ey, off1, off2 } = tr;
-          const { cp1x, cp1y, cp2x, cp2y } = getCP(sx, sy, ex, ey, off1, off2);
+          const { sx, sy, ex, ey, cp1x, cp1y, cp2x, cp2y } = tr;
           for (let i = 0; i < SEG - 1; i++) {
             const t1 = i / (SEG - 1), t2 = (i + 1) / (SEG - 1);
             const pp1 = cbez(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey, t1);
