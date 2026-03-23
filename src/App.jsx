@@ -337,6 +337,9 @@ function App() {
                 while starting from noise yields a broader distribution for sampling.
               </p>
             </div>
+            <div className="loop-panel-figure analysis-frame-narrow">
+              <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
+            </div>
           </div>
 
           <div className="loop-panel" id="loop">
@@ -380,9 +383,6 @@ function App() {
                 For tokenization, the Generative Encoder maps an image to latents in a single forward pass.
                 For generation, we start from Gaussian noise and iteratively denoise through multiple passes of the Generative Encoder.
               </p>
-            </div>
-            <div className="loop-panel-figure analysis-frame-narrow">
-              <img src="./assets/figures/shared_latent_space5.png" alt="Tokenization and generation as the same latent inference problem" loading="lazy" />
             </div>
           </div>
         </section>
