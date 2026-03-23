@@ -425,12 +425,13 @@ function App() {
         </section>
 
         <section className="section" id="analysis">
-          <SectionHeading
-            kicker="Analysis"
-            title="Analyzing the Generative Encoder"
-            subtitle="Parameter tying suggests the model may develop a common latent language — shared internal features and transformations that simultaneously support reconstruction and generation. We study two ablations to isolate the roles of weight sharing and gradient flow, and analyse them from rFID/gFID metrics and representation alignment. See paper Sec. 4 for a compression (compressed weight entropy) analysis."
-            small
-          />
+          <div className="loop-intro reveal">
+            <p className="card-kicker">Analysis</p>
+            <h3>Analyzing the Generative Encoder</h3>
+            <p className="loop-desc">
+              Parameter tying suggests the model may develop a common latent language — shared internal features and transformations that simultaneously support reconstruction and generation. We study two ablations to isolate the roles of weight sharing and gradient flow, and analyse them from rFID/gFID metrics and representation alignment. See paper Sec. 4 for a compression (compressed weight entropy) analysis.
+            </p>
+          </div>
 
           <div className="analysis-grid">
             <article className="analysis-card reveal">
