@@ -213,6 +213,8 @@ export default function TrainingComparison() {
       const cv = canvasRef.current;
       if (!cv) return;
       const cx = cv.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // ── update ──
       s.frame++;
