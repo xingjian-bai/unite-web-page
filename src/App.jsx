@@ -398,7 +398,7 @@ function App() {
           </div>
 
           <div className="sample-header reveal">
-            <p className="card-kicker">Samples from ImageNet 256×256</p>
+            <p className="card-kicker">Generated Examples from UNITE-L</p>
           </div>
 
           <div className="samples-featured">
